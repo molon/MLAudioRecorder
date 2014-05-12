@@ -41,7 +41,7 @@
     
     AmrRecordWriter *amrWriter = [[AmrRecordWriter alloc]init];
     amrWriter.filePath = [path stringByAppendingPathComponent:@"record.amr"];
-    amrWriter.maxSecondCount = 2;
+    amrWriter.maxSecondCount = 60;
     amrWriter.maxFileSize = 1024*256;
     self.amrWriter = amrWriter;
     
