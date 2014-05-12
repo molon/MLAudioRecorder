@@ -21,6 +21,13 @@
 		36DE7E981921060D00E3067D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E7A1921060C00E3067D /* UIKit.framework */; };
 		36DE7EA01921060D00E3067D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 36DE7E9E1921060D00E3067D /* InfoPlist.strings */; };
 		36DE7EA21921060D00E3067D /* MLRecorderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DE7EA11921060D00E3067D /* MLRecorderTests.m */; };
+		36DE7EB61921069900E3067D /* libopencore-amrnb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7EB41921069900E3067D /* libopencore-amrnb.a */; };
+		36DE7EB71921069A00E3067D /* libopencore-amrwb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7EB51921069900E3067D /* libopencore-amrwb.a */; };
+		36DE7EBF192106C300E3067D /* AmrRecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DE7EBA192106C300E3067D /* AmrRecordWriter.m */; };
+		36DE7EC0192106C300E3067D /* CafRecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DE7EBC192106C300E3067D /* CafRecordWriter.m */; };
+		36DE7EC1192106C300E3067D /* MLAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DE7EBE192106C300E3067D /* MLAudioRecorder.m */; };
+		36DE7EC3192106CD00E3067D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7EC2192106CD00E3067D /* AudioToolbox.framework */; };
+		36DE7EC5192106D100E3067D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7EC4192106D100E3067D /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +60,20 @@
 		36DE7E9D1921060D00E3067D /* MLRecorderTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MLRecorderTests-Info.plist"; sourceTree = "<group>"; };
 		36DE7E9F1921060D00E3067D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		36DE7EA11921060D00E3067D /* MLRecorderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLRecorderTests.m; sourceTree = "<group>"; };
+		36DE7EAE1921069900E3067D /* interf_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_dec.h; sourceTree = "<group>"; };
+		36DE7EAF1921069900E3067D /* interf_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_enc.h; sourceTree = "<group>"; };
+		36DE7EB11921069900E3067D /* dec_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dec_if.h; sourceTree = "<group>"; };
+		36DE7EB21921069900E3067D /* if_rom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = if_rom.h; sourceTree = "<group>"; };
+		36DE7EB41921069900E3067D /* libopencore-amrnb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrnb.a"; sourceTree = "<group>"; };
+		36DE7EB51921069900E3067D /* libopencore-amrwb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrwb.a"; sourceTree = "<group>"; };
+		36DE7EB9192106C300E3067D /* AmrRecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmrRecordWriter.h; sourceTree = "<group>"; };
+		36DE7EBA192106C300E3067D /* AmrRecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmrRecordWriter.m; sourceTree = "<group>"; };
+		36DE7EBB192106C300E3067D /* CafRecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CafRecordWriter.h; sourceTree = "<group>"; };
+		36DE7EBC192106C300E3067D /* CafRecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CafRecordWriter.m; sourceTree = "<group>"; };
+		36DE7EBD192106C300E3067D /* MLAudioRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioRecorder.h; sourceTree = "<group>"; };
+		36DE7EBE192106C300E3067D /* MLAudioRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioRecorder.m; sourceTree = "<group>"; };
+		36DE7EC2192106CD00E3067D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		36DE7EC4192106D100E3067D /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +81,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36DE7EC5192106D100E3067D /* AVFoundation.framework in Frameworks */,
+				36DE7EC3192106CD00E3067D /* AudioToolbox.framework in Frameworks */,
 				36DE7E791921060C00E3067D /* CoreGraphics.framework in Frameworks */,
+				36DE7EB71921069A00E3067D /* libopencore-amrwb.a in Frameworks */,
+				36DE7EB61921069900E3067D /* libopencore-amrnb.a in Frameworks */,
 				36DE7E7B1921060C00E3067D /* UIKit.framework in Frameworks */,
 				36DE7E771921060C00E3067D /* Foundation.framework in Frameworks */,
 			);
@@ -101,6 +126,8 @@
 		36DE7E751921060C00E3067D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				36DE7EC4192106D100E3067D /* AVFoundation.framework */,
+				36DE7EC2192106CD00E3067D /* AudioToolbox.framework */,
 				36DE7E761921060C00E3067D /* Foundation.framework */,
 				36DE7E781921060C00E3067D /* CoreGraphics.framework */,
 				36DE7E7A1921060C00E3067D /* UIKit.framework */,
@@ -112,6 +139,8 @@
 		36DE7E7C1921060C00E3067D /* MLRecorder */ = {
 			isa = PBXGroup;
 			children = (
+				36DE7EB8192106B400E3067D /* MLAudioRecorder */,
+				36DE7EAB1921069900E3067D /* amr_en_de */,
 				36DE7E851921060D00E3067D /* AppDelegate.h */,
 				36DE7E861921060D00E3067D /* AppDelegate.m */,
 				36DE7E881921060D00E3067D /* Main.storyboard */,
@@ -150,6 +179,64 @@
 				36DE7E9E1921060D00E3067D /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		36DE7EAB1921069900E3067D /* amr_en_de */ = {
+			isa = PBXGroup;
+			children = (
+				36DE7EAC1921069900E3067D /* include */,
+				36DE7EB31921069900E3067D /* lib */,
+			);
+			path = amr_en_de;
+			sourceTree = "<group>";
+		};
+		36DE7EAC1921069900E3067D /* include */ = {
+			isa = PBXGroup;
+			children = (
+				36DE7EAD1921069900E3067D /* opencore-amrnb */,
+				36DE7EB01921069900E3067D /* opencore-amrwb */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		36DE7EAD1921069900E3067D /* opencore-amrnb */ = {
+			isa = PBXGroup;
+			children = (
+				36DE7EAE1921069900E3067D /* interf_dec.h */,
+				36DE7EAF1921069900E3067D /* interf_enc.h */,
+			);
+			path = "opencore-amrnb";
+			sourceTree = "<group>";
+		};
+		36DE7EB01921069900E3067D /* opencore-amrwb */ = {
+			isa = PBXGroup;
+			children = (
+				36DE7EB11921069900E3067D /* dec_if.h */,
+				36DE7EB21921069900E3067D /* if_rom.h */,
+			);
+			path = "opencore-amrwb";
+			sourceTree = "<group>";
+		};
+		36DE7EB31921069900E3067D /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				36DE7EB41921069900E3067D /* libopencore-amrnb.a */,
+				36DE7EB51921069900E3067D /* libopencore-amrwb.a */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		36DE7EB8192106B400E3067D /* MLAudioRecorder */ = {
+			isa = PBXGroup;
+			children = (
+				36DE7EB9192106C300E3067D /* AmrRecordWriter.h */,
+				36DE7EBA192106C300E3067D /* AmrRecordWriter.m */,
+				36DE7EBB192106C300E3067D /* CafRecordWriter.h */,
+				36DE7EBC192106C300E3067D /* CafRecordWriter.m */,
+				36DE7EBD192106C300E3067D /* MLAudioRecorder.h */,
+				36DE7EBE192106C300E3067D /* MLAudioRecorder.m */,
+			);
+			path = MLAudioRecorder;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,7 +336,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36DE7EBF192106C300E3067D /* AmrRecordWriter.m in Sources */,
+				36DE7EC0192106C300E3067D /* CafRecordWriter.m in Sources */,
 				36DE7E8D1921060D00E3067D /* ViewController.m in Sources */,
+				36DE7EC1192106C300E3067D /* MLAudioRecorder.m in Sources */,
 				36DE7E871921060D00E3067D /* AppDelegate.m in Sources */,
 				36DE7E831921060D00E3067D /* main.m in Sources */,
 			);
@@ -379,6 +469,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLRecorder/MLRecorder-Prefix.pch";
 				INFOPLIST_FILE = "MLRecorder/MLRecorder-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MLRecorder/amr_en_de/lib",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -392,6 +486,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLRecorder/MLRecorder-Prefix.pch";
 				INFOPLIST_FILE = "MLRecorder/MLRecorder-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MLRecorder/amr_en_de/lib",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
