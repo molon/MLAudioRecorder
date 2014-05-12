@@ -30,6 +30,7 @@ typedef void (^MLAudioRecorderReceiveStoppedBlock)();
 
 /**
  *  处理写文件操作的，实际是转码的操作在其中进行。算作可扩展自定义的转码器
+ *  当然如果是实时语音的需求的话，就可以在此处理编码后发送语音数据到对方
  *  PS:这里的三个方法是在后台线程中处理的
  */
 @protocol FileWriterForMLAudioRecorder <NSObject>

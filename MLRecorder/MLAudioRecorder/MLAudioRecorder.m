@@ -150,7 +150,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
             });
         }
         
-        //同步下写入串行队列
+        //简单同步下写入串行队列
         dispatch_sync(self.writeFileQueue, ^{});
         
         NSLog(@"录音结束");
