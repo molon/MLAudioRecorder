@@ -101,12 +101,15 @@
 - (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder withIsError:(BOOL)isError
 {
     //关闭就关闭吧。管他关闭成功与否
+    if(_file){
+        fclose(_file);
+        _file = 0;
+    }
     
-    fclose(_file);
-    _file = 0;
-    
-    lame_close(_lame);
-    _lame = 0;
+    if(_lame){
+        lame_close(_lame);
+        _lame = 0;
+    }
     
     return YES;
 }

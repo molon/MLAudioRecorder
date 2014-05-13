@@ -52,7 +52,7 @@
     if(fwrite(amrHeader, 1, strlen(amrHeader), _file)==0){
         return NO;
     }
-
+    
     self.recordedFileSize += strlen(amrHeader);
     
     
@@ -70,7 +70,7 @@
 {
     if (self.maxSecondCount>0){
         if (self.recordedSecondCount+recoder.bufferDurationSeconds>self.maxSecondCount){
-//            NSLog(@"录音超时");
+            //            NSLog(@"录音超时");
             dispatch_async(dispatch_get_main_queue(), ^{
                 [recoder stopRecording];
             });
@@ -104,7 +104,7 @@
         if (recvLen>0) {
             if (self.maxFileSize>0){
                 if(self.recordedFileSize+recvLen>self.maxFileSize){
-//                    NSLog(@"录音文件过大");
+                    //                    NSLog(@"录音文件过大");
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [recoder stopRecording];
                     });
@@ -134,15 +134,19 @@
 - (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder withIsError:(BOOL)isError
 {
     //关闭就关闭吧。管他关闭成功与否
-    fclose(_file);
-    _file = 0;
-    
-    Encoder_Interface_exit((void*)_destate);
-    _destate = 0;
-    
+    if(_file){
+        fclose(_file);
+        _file = 0;
+    }
+    if (_destate){
+        Encoder_Interface_exit((void*)_destate);
+        _destate = 0;
+    }
     
     //caf
-    AudioFileClose(mRecordFile);
+    if(mRecordFile){
+        AudioFileClose(mRecordFile);
+    }
     
     return YES;
 }
@@ -156,6 +160,12 @@
     if (_destate){
         Encoder_Interface_exit((void*)_destate);
         _destate = 0;
+    }
+    
+    
+    //caf
+    if(mRecordFile){
+        AudioFileClose(mRecordFile);
     }
 }
 

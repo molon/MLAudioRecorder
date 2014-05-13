@@ -34,7 +34,7 @@
 - (BOOL)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc
 {
     OSStatus err = AudioFileWritePackets(mRecordFile, FALSE, data.length,
-                          inPacketDesc, recordPacketCount, &inNumPackets, data.bytes);
+                                         inPacketDesc, recordPacketCount, &inNumPackets, data.bytes);
     if (err!=noErr) {
         return NO;
     }
@@ -45,19 +45,21 @@
 
 - (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder withIsError:(BOOL)isError
 {
-    OSStatus err = AudioFileClose(mRecordFile);
+    if (mRecordFile) {
+        AudioFileClose(mRecordFile);
+    }
     
     
-//    NSData *data = [[NSData alloc]initWithContentsOfFile:self.filePath];
-//    NSLog(@"文件长度%ld",data.length);
+    //    NSData *data = [[NSData alloc]initWithContentsOfFile:self.filePath];
+    //    NSLog(@"文件长度%ld",data.length);
     
-    return err==noErr;
+    return YES;
 }
 
 -(void)dealloc
 {
     if (mRecordFile) {
-    AudioFileClose(mRecordFile);
+        AudioFileClose(mRecordFile);
     }
 }
 @end

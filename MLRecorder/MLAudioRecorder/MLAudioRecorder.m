@@ -44,6 +44,8 @@ return; \
 @property (nonatomic, strong) dispatch_semaphore_t semError; //一个信号量，用来保证队列中写文件错误事件处理只调用一次
 @property (nonatomic, assign) BOOL isRecording;
 
+@property (nonatomic, assign) BOOL isEnabledMeter;
+
 @end
 
 @implementation MLAudioRecorder
@@ -158,6 +160,15 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     IfAudioQueueErrorPostAndReturn(AudioQueueStart(_audioQueue, NULL),@"开始音频输入队列失败");
     
     self.isRecording = YES;
+
+    //检测是否支持音频光谱
+    UInt32 val = 1;
+    IfAudioQueueErrorPostAndReturn(AudioQueueSetProperty(_audioQueue, kAudioQueueProperty_EnableLevelMetering, &val, sizeof(UInt32)),@"获取是否支持音频光谱失败");
+    
+    if(val){
+        self.isEnabledMeter = YES;
+    }
+
 }
 
 - (void)stopRecording
