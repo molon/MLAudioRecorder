@@ -10,7 +10,7 @@
 #import "MLAudioRecorder.h"
 #import "CafRecordWriter.h"
 #import "AmrRecordWriter.h"
-
+#import "Mp3RecordWriter.h"
 #import <AVFoundation/AVFoundation.h>
 
 @interface ViewController ()
@@ -18,6 +18,7 @@
 @property (nonatomic, strong) MLAudioRecorder *recorder;
 @property (nonatomic, strong) CafRecordWriter *cafWriter;
 @property (nonatomic, strong) AmrRecordWriter *amrWriter;
+@property (nonatomic, strong) Mp3RecordWriter *mp3Writer;
 
 @property (nonatomic, strong) AVAudioPlayer *player;
 
@@ -33,11 +34,10 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *filePath = [path stringByAppendingPathComponent:@"recording.caf"];
-    self.filePath = filePath;
     
     CafRecordWriter *writer = [[CafRecordWriter alloc]init];
-    writer.filePath = filePath;
+    writer.filePath = [path stringByAppendingPathComponent:@"record.caf"];
+    self.cafWriter = writer;
     
     AmrRecordWriter *amrWriter = [[AmrRecordWriter alloc]init];
     amrWriter.filePath = [path stringByAppendingPathComponent:@"record.amr"];
@@ -45,16 +45,36 @@
     amrWriter.maxFileSize = 1024*256;
     self.amrWriter = amrWriter;
     
-    MLAudioRecorder *recorder = [[MLAudioRecorder alloc]init];
-//    recorder.fileWriterDelegate = writer;
-    recorder.fileWriterDelegate = amrWriter;
+    Mp3RecordWriter *mp3Writer = [[Mp3RecordWriter alloc]init];
+    mp3Writer.filePath = [path stringByAppendingPathComponent:@"record.mp3"];
+    mp3Writer.maxSecondCount = 60;
+    mp3Writer.maxFileSize = 1024*256;
+    self.mp3Writer = mp3Writer;
     
+    MLAudioRecorder *recorder = [[MLAudioRecorder alloc]init];
     __weak __typeof(self)weakSelf = self;
     recorder.receiveStoppedBlock = ^{
         [weakSelf.recordButton setTitle:@"Record" forState:UIControlStateNormal];
     };
+    recorder.receiveErrorBlock = ^(NSError *error){
+        [weakSelf.recordButton setTitle:@"Record" forState:UIControlStateNormal];
+        [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
+    };
     
-    self.cafWriter = writer;
+    
+    //caf
+//    recorder.fileWriterDelegate = writer;
+//    self.filePath = writer.filePath;
+    
+    //amr
+    recorder.bufferDurationSeconds = 0.04;
+    recorder.fileWriterDelegate = amrWriter;
+    self.filePath  = amrWriter.filePath;
+    
+    //mp3
+//    recorder.fileWriterDelegate = mp3Writer;
+//    self.filePath = mp3Writer.filePath;
+    
     self.recorder = recorder;
 }
 
@@ -70,18 +90,20 @@
     if (self.recorder.isRecording) {
         //取消录音
         [self.recorder stopRecording];
-        [recordButton setTitle:@"Record" forState:UIControlStateNormal];
     }else{
+        [recordButton setTitle:@"Stop" forState:UIControlStateNormal];
         //开始录音
         [self.recorder startRecording];
-        [recordButton setTitle:@"Stop" forState:UIControlStateNormal];
     }
 
 }
 
 - (IBAction)play:(id)sender {
-//    self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
-//    [self.player play];
+    //除去amr的都能直接播放
+    if (![self.recorder.fileWriterDelegate isKindOfClass:[AmrRecordWriter class]]){
+        self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
+        [self.player play];
+    }
 }
 
 @end

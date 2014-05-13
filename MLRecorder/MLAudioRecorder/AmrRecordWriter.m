@@ -14,53 +14,58 @@
 @interface AmrRecordWriter()
 {
     FILE *_file;
-    void *destate;
+    void *_destate;
 }
 
-@property (nonatomic, assign) unsigned long fileSize;
+@property (nonatomic, assign) unsigned long recordedFileSize;
 @property (nonatomic, assign) double recordedSecondCount;
 
 @end
 
 @implementation AmrRecordWriter
 
-- (void)createFileWithRecorder:(MLAudioRecorder*)recoder;
+- (BOOL)createFileWithRecorder:(MLAudioRecorder*)recoder;
 {
     // amr 压缩句柄
-    destate = Encoder_Interface_init(0);
+    _destate = Encoder_Interface_init(0);
+    
+    if(_destate==0){
+        return NO;
+    }
     
     //建立amr文件
     _file = fopen((const char *)[self.filePath UTF8String], "wb+");
     if (_file==0) {
         NSLog(@"建立文件失败:%s",__FUNCTION__);
-        return;
+        return NO;
     }
     
-    self.fileSize = 0;
+    self.recordedFileSize = 0;
     self.recordedSecondCount = 0;
     
     //写入文件头
     static const char* amrHeader = "#!AMR\n";
-    fwrite(amrHeader, 1, strlen(amrHeader), _file);
+    if(fwrite(amrHeader, 1, strlen(amrHeader), _file)==0){
+        return NO;
+    }
 
-    self.fileSize += strlen(amrHeader);
+    self.recordedFileSize += strlen(amrHeader);
     
-    NSLog(@"filePath:%@",self.filePath);
+    return YES;
     
 }
 
-- (void)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inBuffer:(AudioQueueBufferRef)inBuffer inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc
+- (BOOL)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc
 {
-    
     if (self.maxSecondCount>0){
-        if (self.recordedSecondCount+kBufferDurationSeconds>self.maxSecondCount){
+        if (self.recordedSecondCount+recoder.bufferDurationSeconds>self.maxSecondCount){
 //            NSLog(@"录音超时");
             dispatch_async(dispatch_get_main_queue(), ^{
                 [recoder stopRecording];
             });
-            return;
+            return YES;
         }
-        self.recordedSecondCount += kBufferDurationSeconds;
+        self.recordedSecondCount += recoder.bufferDurationSeconds;
     }
     
     //编码
@@ -68,7 +73,7 @@
     NSUInteger pcmLen = data.length;
     
     if (pcmLen<=0){
-        return;
+        return YES;
     }
     if (pcmLen%2!=0){
         pcmLen--; //防止意外，如果不是偶数，情愿减去最后一个字节。
@@ -79,37 +84,43 @@
     for (int i =0; i < pcmLen ;i+=160*2) {
         short *pPacket = (short *)((unsigned char*)recordingData+i);
         if (pcmLen-i<160*2){
-            break; //不是一个完整的帧就拜拜
+            continue; //不是一个完整的就拜拜
         }
         
         memset(buffer, 0, sizeof(buffer));
         //encode
-        int recvLen = Encoder_Interface_Encode(destate,MR122,pPacket,buffer,0);
+        int recvLen = Encoder_Interface_Encode(_destate,MR122,pPacket,buffer,0);
         if (recvLen>0) {
             if (self.maxFileSize>0){
-                if(self.fileSize+recvLen>self.maxFileSize){
+                if(self.recordedFileSize+recvLen>self.maxFileSize){
 //                    NSLog(@"录音文件过大");
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [recoder stopRecording];
                     });
-                    return;//超过了最大文件大小就直接返回
+                    return YES;//超过了最大文件大小就直接返回
                 }
             }
             
-            fwrite(buffer,1,recvLen,_file);
-            self.fileSize += recvLen;
+            if(fwrite(buffer,1,recvLen,_file)==0){
+                return NO;//只有写文件有可能出错。返回NO
+            }
+            self.recordedFileSize += recvLen;
         }
     }
+    
+    return YES;
 }
 
-- (void)completeWriteWithRecorder:(MLAudioRecorder*)recoder
+- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder
 {
+    //关闭就关闭吧。管他关闭成功与否
     fclose(_file);
     _file = 0;
     
-    Encoder_Interface_exit((void*)destate);
-    destate = 0;
+    Encoder_Interface_exit((void*)_destate);
+    _destate = 0;
     
+    return YES;
 }
 
 - (void)dealloc
@@ -117,6 +128,10 @@
 	if(_file){
         fclose(_file);
         _file = 0;
+    }
+    if (_destate){
+        Encoder_Interface_exit((void*)_destate);
+        _destate = 0;
     }
 }
 

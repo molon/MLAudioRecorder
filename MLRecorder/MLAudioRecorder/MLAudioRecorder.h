@@ -13,18 +13,19 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 
-/**
- *  每次的音频输入队列缓存区所保存的是多少秒的数据
- */
-#define kBufferDurationSeconds 0.04
-/**
- *  采样率，要转码为amr的话必须为8000
- */
-#define kSampleRate 8000
-
-
-//录音停止事件的block回调，作用参考MLAudioRecorderDelegate的recordStopped
+//录音停止事件的block回调，作用参考MLAudioRecorderDelegate的recordStopped和recordError:
 typedef void (^MLAudioRecorderReceiveStoppedBlock)();
+typedef void (^MLAudioRecorderReceiveErrorBlock)(NSError *error);
+
+/**
+ *  错误标识
+ */
+typedef NS_OPTIONS(NSUInteger, MLAudioRecorderErrorCode) {
+    MLAudioRecorderErrorCodeAboutFile = 0, //关于文件操作的错误
+    MLAudioRecorderErrorCodeAboutQueue, //关于音频输入队列的错误
+    MLAudioRecorderErrorCodeAboutSession, //关于audio session的错误
+    MLAudioRecorderErrorCodeAboutOther, //关于其他的错误
+};
 
 @class MLAudioRecorder;
 
@@ -40,29 +41,35 @@ typedef void (^MLAudioRecorderReceiveStoppedBlock)();
  *  在录音开始时候建立文件和写入文件头信息等操作
  *
  */
-- (void)createFileWithRecorder:(MLAudioRecorder*)recoder;
+- (BOOL)createFileWithRecorder:(MLAudioRecorder*)recoder;
 
 /**
  *  写入音频输入数据，内部处理转码等其他逻辑
  *  能传递过来的都传递了。以方便多能扩展使用
  */
-- (void)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inBuffer:(AudioQueueBufferRef)inBuffer inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc;
+- (BOOL)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc;
 
 /**
  *  文件写入完成之后的操作，例如文件句柄关闭等
  *
  */
-- (void)completeWriteWithRecorder:(MLAudioRecorder*)recoder;
+- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder;
 
 @end
 
 @protocol MLAudioRecorderDelegate <NSObject>
 
+@required
+/**
+ *  录音遇到了错误，例如创建文件失败啊。写入失败啊。关闭文件失败啊，等等。
+ */
+- (void)recordError:(NSError *)error;
+
+@optional
 /**
  *  录音被停止
  *  一般是在writer delegate中因为一些状况意外停止录音获得此事件时候使用，参考AmrRecordWriter里实现。
  */
-@optional
 - (void)recordStopped;
 
 @end
@@ -79,7 +86,14 @@ typedef void (^MLAudioRecorderReceiveStoppedBlock)();
 /**
  *  是否正在录音
  */
-@property (nonatomic, assign,readonly) BOOL isRecording;
+@property (atomic, assign,readonly) BOOL isRecording;
+
+/**
+ *  这俩是当前的采样率和缓冲区采集秒数，根据情况可以设置(对其设置必须在startRecording之前才有效)，随意设置可能有意外发生。
+ *  这俩属性被标识为原子性的，读取写入是线程安全的。
+ */
+@property (atomic, assign) NSUInteger sampleRate;
+@property (atomic, assign) double bufferDurationSeconds;
 
 /**
  *  处理写文件操作的，实际是转码的操作在其中进行。算作可扩展自定义的转码器
@@ -87,9 +101,10 @@ typedef void (^MLAudioRecorderReceiveStoppedBlock)();
 @property (nonatomic, weak) id<FileWriterForMLAudioRecorder> fileWriterDelegate;
 
 /**
- *  参考MLAudioRecorderReceiveStoppedBlock
+ *  参考MLAudioRecorderReceiveStoppedBlock和MLAudioRecorderReceiveErrorBlock
  */
 @property (nonatomic, copy) MLAudioRecorderReceiveStoppedBlock receiveStoppedBlock;
+@property (nonatomic, copy) MLAudioRecorderReceiveErrorBlock receiveErrorBlock;
 
 /**
  *  参考MLAudioRecorderDelegate

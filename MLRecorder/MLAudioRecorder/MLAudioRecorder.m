@@ -15,6 +15,25 @@
  */
 #define kNumberAudioQueueBuffers 3
 
+/**
+ *  每次的音频输入队列缓存区所保存的是多少秒的数据
+ */
+#define kDefaultBufferDurationSeconds 0.5
+/**
+ *  采样率，要转码为amr的话必须为8000
+ */
+#define kDefaultSampleRate 8000
+
+
+#define kMLAudioRecorderErrorDomain @"MLAudioRecorderErrorDomain"
+
+
+#define IfAudioQueueErrorPostAndReturn(operation,error) \
+if(operation!=noErr) { \
+[self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutQueue andDescription:error]; \
+return; \
+}   \
+
 @interface MLAudioRecorder()
 {
     //音频输入缓冲区
@@ -22,6 +41,7 @@
 }
 
 @property (nonatomic, strong) dispatch_queue_t writeFileQueue;
+@property (nonatomic, strong) dispatch_semaphore_t semError; //一个信号量，用来保证队列中写文件错误事件处理只调用一次
 @property (nonatomic, assign) BOOL isRecording;
 
 @end
@@ -32,11 +52,14 @@
 {
     self = [super init];
     if (self) {
-        //建立写入文件线程队列,串行
+        //建立写入文件线程队列,串行，和一个信号量标识
         self.writeFileQueue = dispatch_queue_create("com.molon.MLAudioRecorder.writeFileQueue", NULL);
         
+        self.sampleRate = kDefaultSampleRate;
+        self.bufferDurationSeconds = kDefaultBufferDurationSeconds;
+        
         //设置录音的format数据
-        [self setupAudioFormat:kAudioFormatLinearPCM SampleRate:kSampleRate];
+        [self setupAudioFormat:kAudioFormatLinearPCM SampleRate:self.sampleRate];
         
     }
     return self;
@@ -59,10 +82,18 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         if (pcmData) {
             //写入文件
             __weak __typeof(recorder)weakSelf = recorder;
-            if(recorder.fileWriterDelegate&&[recorder.fileWriterDelegate respondsToSelector:@selector(writeIntoFileWithData:withRecorder:inAQ:inBuffer:inStartTime:inNumPackets:inPacketDesc:)]){
+            if(recorder.fileWriterDelegate&&[recorder.fileWriterDelegate respondsToSelector:@selector(writeIntoFileWithData:withRecorder:inAQ:inStartTime:inNumPackets:inPacketDesc:)]){
                 //在后台串行队列中去处理文件写入
                 dispatch_async(recorder.writeFileQueue, ^{
-                    [recorder.fileWriterDelegate writeIntoFileWithData:pcmData withRecorder:weakSelf inAQ:inAQ inBuffer:inBuffer inStartTime:inStartTime inNumPackets:inNumPackets inPacketDesc:inPacketDesc];
+                    if(![recorder.fileWriterDelegate writeIntoFileWithData:pcmData withRecorder:weakSelf inAQ:inAQ inStartTime:inStartTime inNumPackets:inNumPackets inPacketDesc:inPacketDesc]){
+                        //保证只处理了一次
+                        if (dispatch_semaphore_wait(recorder.semError,DISPATCH_TIME_NOW)==0){
+                            //回到主线程
+                            dispatch_async(dispatch_get_main_queue(),^{
+                                [recorder postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutFile andDescription:@"写入文件失败"];
+                            });
+                        }
+                    }
                 });
             }
         }
@@ -78,7 +109,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     //设置audio session的category
     BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
     if (!ret) {
-        NSLog(@"%s - set audio session category failed with error %@", __func__,[error description]);
+        [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutSession andDescription:@"为AVAudioSession设置Category失败"];
         return;
     }
     
@@ -86,72 +117,69 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     ret = [[AVAudioSession sharedInstance] setActive:YES error:&error];
     if (!ret)
     {
-        NSLog(@"%s - activate audio session failed with error %@", __func__,[error description]);
+        [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutSession andDescription:@"Active AVAudioSession失败"];
         return;
     }
     
-    //建立文件
-    if(!self.fileWriterDelegate||![self.fileWriterDelegate respondsToSelector:@selector(createFileWithRecorder:)]||![self.fileWriterDelegate respondsToSelector:@selector(writeIntoFileWithData:withRecorder:inAQ:inBuffer:inStartTime:inNumPackets:inPacketDesc:)]||![self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:)]){
-        NSLog(@"%s - fileWriterDelegate is not valid", __func__);
+    if(!self.fileWriterDelegate||![self.fileWriterDelegate respondsToSelector:@selector(createFileWithRecorder:)]||![self.fileWriterDelegate respondsToSelector:@selector(writeIntoFileWithData:withRecorder:inAQ:inStartTime:inNumPackets:inPacketDesc:)]||![self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:)]){
+        [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutOther andDescription:@"fileWriterDelegate的代理未设置或其代理方法不完整"];
         return;
     }
     
     //同步下写入串行队列，防止意外前面有没处理的
     dispatch_sync(self.writeFileQueue, ^{});
+    self.semError = dispatch_semaphore_create(0); //重新初始化信号量标识
+    dispatch_semaphore_signal(self.semError); //设置有一个信号
     
-    __weak __typeof(self)weakSelf = self;
-    dispatch_async(self.writeFileQueue, ^{
-        [self.fileWriterDelegate createFileWithRecorder:weakSelf]; //delegate的操作全部在后台线程中处理
-    });
+    //建立文件,直接主线程建立吧
+    if(![self.fileWriterDelegate createFileWithRecorder:self]){
+        [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutFile andDescription:@"为音频输入建立文件失败"];
+        return;
+    }
     
-#warning 异常处理未做
+    _recordFormat.mSampleRate = self.sampleRate;
+    
+    
     //设置录音的回调函数
-    AudioQueueNewInput(&_recordFormat, inputBufferHandler, (__bridge void *)(self), NULL, NULL, 0, &_audioQueue);
+    IfAudioQueueErrorPostAndReturn(AudioQueueNewInput(&_recordFormat, inputBufferHandler, (__bridge void *)(self), NULL, NULL, 0, &_audioQueue),@"音频输入队列初始化失败");
     
     //计算估算的缓存区大小
-    int frames = (int)ceil(kBufferDurationSeconds * _recordFormat.mSampleRate);
+    int frames = (int)ceil(self.bufferDurationSeconds * _recordFormat.mSampleRate);
     int bufferByteSize = frames * _recordFormat.mBytesPerFrame;
     NSLog(@"缓冲区大小:%d",bufferByteSize);
     
     //创建缓冲器
     for (int i = 0; i < kNumberAudioQueueBuffers; ++i){
-        AudioQueueAllocateBuffer(_audioQueue, bufferByteSize, &_audioBuffers[i]);
-        AudioQueueEnqueueBuffer(_audioQueue, _audioBuffers[i], 0, NULL);
+        IfAudioQueueErrorPostAndReturn(AudioQueueAllocateBuffer(_audioQueue, bufferByteSize, &_audioBuffers[i]),@"为音频输入队列建立缓冲区失败");
+        IfAudioQueueErrorPostAndReturn(AudioQueueEnqueueBuffer(_audioQueue, _audioBuffers[i], 0, NULL),@"为音频输入队列缓冲区做准备失败");
     }
     
     // 开始录音
-    AudioQueueStart(_audioQueue, NULL);
+    IfAudioQueueErrorPostAndReturn(AudioQueueStart(_audioQueue, NULL),@"开始音频输入队列失败");
+    
     self.isRecording = YES;
 }
 
 - (void)stopRecording
 {
-//    NSLog(@"stopRecording");
+    //    NSLog(@"stopRecording");
     if (self.isRecording) {
         self.isRecording = NO;
         
-        //停止录音队列和移除缓冲区
-        AudioQueueStop(_audioQueue, true);
-        AudioQueueDispose(_audioQueue, true);
-        
-        //关闭audio session
-        NSError *error = nil;
-        BOOL ret = [[AVAudioSession sharedInstance] setActive:NO error:&error];
-        if (!ret)
-        {
-            NSLog(@"%s - inactivate audio session failed with error %@", __func__,[error description]);
-            return;
-        }
-        
-        if (self.fileWriterDelegate&&[self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:)]) {
-            __weak __typeof(self)weakSelf = self;
-            dispatch_async(self.writeFileQueue, ^{
-                [self.fileWriterDelegate completeWriteWithRecorder:weakSelf];
-            });
-        }
-        
         //简单同步下写入串行队列
         dispatch_sync(self.writeFileQueue, ^{});
+        
+        if (self.fileWriterDelegate&&[self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:)]) {
+            if (![self.fileWriterDelegate completeWriteWithRecorder:self]) {
+                [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutFile andDescription:@"为音频输入关闭文件失败"];
+                return;
+            }
+        }
+        
+        //停止录音队列和移除缓冲区,以及关闭session，这里无需考虑成功与否
+        AudioQueueStop(_audioQueue, true);
+        AudioQueueDispose(_audioQueue, true);
+        [[AVAudioSession sharedInstance] setActive:NO error:nil];
         
         NSLog(@"录音结束");
         
@@ -179,7 +207,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     //设置通道数,这里先使用系统的测试下 //TODO:
     _recordFormat.mChannelsPerFrame = 1;//(UInt32)[[AVAudioSession sharedInstance] inputNumberOfChannels];
     
-//    NSLog(@"sampleRate:%f,通道数:%d",_recordFormat.mSampleRate,_recordFormat.mChannelsPerFrame);
+    //    NSLog(@"sampleRate:%f,通道数:%d",_recordFormat.mSampleRate,_recordFormat.mChannelsPerFrame);
     
     //设置format，怎么称呼不知道。
 	_recordFormat.mFormatID = inFormatID;
@@ -196,4 +224,26 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
 		_recordFormat.mFramesPerPacket = 1;
 	}
 }
+
+- (void)postAErrorWithErrorCode:(MLAudioRecorderErrorCode)code andDescription:(NSString*)description
+{
+    //关闭可能还未关闭的东西,无需考虑结果
+    self.isRecording = NO;
+    AudioQueueStop(_audioQueue, true);
+    AudioQueueDispose(_audioQueue, true);
+    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+    
+    NSLog(@"录音发生错误");
+    
+    NSError *error = [NSError errorWithDomain:kMLAudioRecorderErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
+    
+    if (self.delegate&&[self.delegate respondsToSelector:@selector(recordError:)]){
+        [self.delegate recordError:error];
+    }
+    
+    if( self.receiveErrorBlock){
+        self.receiveErrorBlock(error);
+    }
+}
+
 @end

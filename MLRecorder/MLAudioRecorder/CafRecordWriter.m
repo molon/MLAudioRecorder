@@ -19,7 +19,7 @@
 @implementation CafRecordWriter
 
 
-- (void)createFileWithRecorder:(MLAudioRecorder*)recoder
+- (BOOL)createFileWithRecorder:(MLAudioRecorder*)recoder
 {
     //PS:注意以下都没有做错误处理
     
@@ -27,27 +27,39 @@
     recordPacketCount = 0;
     
     CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, (CFStringRef)self.filePath, NULL);
-    AudioFileCreateWithURL(url, kAudioFileCAFType, (const AudioStreamBasicDescription	*)(&(recoder->_recordFormat)), kAudioFileFlags_EraseFile, &mRecordFile);
+    OSStatus err = AudioFileCreateWithURL(url, kAudioFileCAFType, (const AudioStreamBasicDescription	*)(&(recoder->_recordFormat)), kAudioFileFlags_EraseFile, &mRecordFile);
     CFRelease(url);
+    
+    return err==noErr;
 }
 
-- (void)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inBuffer:(AudioQueueBufferRef)inBuffer inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc
+- (BOOL)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc
 {
-    AudioFileWritePackets(mRecordFile, FALSE, inBuffer->mAudioDataByteSize,
-                          inPacketDesc, recordPacketCount, &inNumPackets, inBuffer->mAudioData);
+    OSStatus err = AudioFileWritePackets(mRecordFile, FALSE, data.length,
+                          inPacketDesc, recordPacketCount, &inNumPackets, data.bytes);
+    if (err!=noErr) {
+        return NO;
+    }
     recordPacketCount += inNumPackets;
+    
+    return YES;
 }
 
-- (void)completeWriteWithRecorder:(MLAudioRecorder*)recoder
+- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder
 {
-    AudioFileClose(mRecordFile);
+    OSStatus err = AudioFileClose(mRecordFile);
+    
     
 //    NSData *data = [[NSData alloc]initWithContentsOfFile:self.filePath];
 //    NSLog(@"文件长度%ld",data.length);
+    
+    return err==noErr;
 }
 
 -(void)dealloc
 {
+    if (mRecordFile) {
     AudioFileClose(mRecordFile);
+    }
 }
 @end
