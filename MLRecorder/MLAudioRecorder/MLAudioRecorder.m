@@ -121,7 +121,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         return;
     }
     
-    if(!self.fileWriterDelegate||![self.fileWriterDelegate respondsToSelector:@selector(createFileWithRecorder:)]||![self.fileWriterDelegate respondsToSelector:@selector(writeIntoFileWithData:withRecorder:inAQ:inStartTime:inNumPackets:inPacketDesc:)]||![self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:)]){
+    if(!self.fileWriterDelegate||![self.fileWriterDelegate respondsToSelector:@selector(createFileWithRecorder:)]||![self.fileWriterDelegate respondsToSelector:@selector(writeIntoFileWithData:withRecorder:inAQ:inStartTime:inNumPackets:inPacketDesc:)]||![self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:withIsError:)]){
         [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutOther andDescription:@"fileWriterDelegate的代理未设置或其代理方法不完整"];
         return;
     }
@@ -169,8 +169,8 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         //简单同步下写入串行队列
         dispatch_sync(self.writeFileQueue, ^{});
         
-        if (self.fileWriterDelegate&&[self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:)]) {
-            if (![self.fileWriterDelegate completeWriteWithRecorder:self]) {
+        if (self.fileWriterDelegate&&[self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:withIsError:)]) {
+            if (![self.fileWriterDelegate completeWriteWithRecorder:self withIsError:NO]) {
                 [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutFile andDescription:@"为音频输入关闭文件失败"];
                 return;
             }
@@ -229,9 +229,15 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
 {
     //关闭可能还未关闭的东西,无需考虑结果
     self.isRecording = NO;
+    
+    if (self.fileWriterDelegate&&[self.fileWriterDelegate respondsToSelector:@selector(completeWriteWithRecorder:withIsError:)]) {
+        [self.fileWriterDelegate completeWriteWithRecorder:self withIsError:YES];
+    }
+    
     AudioQueueStop(_audioQueue, true);
     AudioQueueDispose(_audioQueue, true);
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
+    
     
     NSLog(@"录音发生错误");
     

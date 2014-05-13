@@ -50,10 +50,10 @@ typedef NS_OPTIONS(NSUInteger, MLAudioRecorderErrorCode) {
 - (BOOL)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc;
 
 /**
- *  文件写入完成之后的操作，例如文件句柄关闭等
+ *  文件写入完成之后的操作，例如文件句柄关闭等,isError表示是否是因为错误才调用的
  *
  */
-- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder;
+- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder withIsError:(BOOL)isError;
 
 @end
 

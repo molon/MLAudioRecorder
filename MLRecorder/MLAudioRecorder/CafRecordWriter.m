@@ -21,8 +21,6 @@
 
 - (BOOL)createFileWithRecorder:(MLAudioRecorder*)recoder
 {
-    //PS:注意以下都没有做错误处理
-    
     //建立文件
     recordPacketCount = 0;
     
@@ -45,7 +43,7 @@
     return YES;
 }
 
-- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder
+- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder withIsError:(BOOL)isError
 {
     OSStatus err = AudioFileClose(mRecordFile);
     

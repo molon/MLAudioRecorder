@@ -250,10 +250,10 @@
 				36DE7EBA192106C300E3067D /* AmrRecordWriter.m */,
 				36DE7EBB192106C300E3067D /* CafRecordWriter.h */,
 				36DE7EBC192106C300E3067D /* CafRecordWriter.m */,
-				36DE7EBD192106C300E3067D /* MLAudioRecorder.h */,
-				36DE7EBE192106C300E3067D /* MLAudioRecorder.m */,
 				36D909E21921D2C2000D6825 /* Mp3RecordWriter.h */,
 				36D909E31921D2C2000D6825 /* Mp3RecordWriter.m */,
+				36DE7EBD192106C300E3067D /* MLAudioRecorder.h */,
+				36DE7EBE192106C300E3067D /* MLAudioRecorder.m */,
 			);
 			path = MLAudioRecorder;
 			sourceTree = "<group>";

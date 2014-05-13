@@ -15,6 +15,10 @@
 {
     FILE *_file;
     void *_destate;
+    
+    
+    AudioFileID mRecordFile;
+    SInt64 recordPacketCount;
 }
 
 @property (nonatomic, assign) unsigned long recordedFileSize;
@@ -51,8 +55,15 @@
 
     self.recordedFileSize += strlen(amrHeader);
     
-    return YES;
     
+    //建立caf文件
+    recordPacketCount = 0;
+    
+    CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, (CFStringRef)self.cafFilePath, NULL);
+    OSStatus err = AudioFileCreateWithURL(url, kAudioFileCAFType, (const AudioStreamBasicDescription	*)(&(recoder->_recordFormat)), kAudioFileFlags_EraseFile, &mRecordFile);
+    CFRelease(url);
+    
+    return err==noErr;
 }
 
 - (BOOL)writeIntoFileWithData:(NSData*)data withRecorder:(MLAudioRecorder*)recoder inAQ:(AudioQueueRef)						inAQ inStartTime:(const AudioTimeStamp *)inStartTime inNumPackets:(UInt32)inNumPackets inPacketDesc:(const AudioStreamPacketDescription*)inPacketDesc
@@ -108,10 +119,19 @@
         }
     }
     
+    
+    //caf 写入
+    OSStatus err = AudioFileWritePackets(mRecordFile, FALSE, data.length,
+                                         inPacketDesc, recordPacketCount, &inNumPackets, data.bytes);
+    if (err!=noErr) {
+        return NO;
+    }
+    recordPacketCount += inNumPackets;
+    
     return YES;
 }
 
-- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder
+- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder withIsError:(BOOL)isError
 {
     //关闭就关闭吧。管他关闭成功与否
     fclose(_file);
@@ -119,6 +139,10 @@
     
     Encoder_Interface_exit((void*)_destate);
     _destate = 0;
+    
+    
+    //caf
+    AudioFileClose(mRecordFile);
     
     return YES;
 }

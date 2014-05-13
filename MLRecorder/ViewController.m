@@ -43,6 +43,7 @@
     amrWriter.filePath = [path stringByAppendingPathComponent:@"record.amr"];
     amrWriter.maxSecondCount = 60;
     amrWriter.maxFileSize = 1024*256;
+    amrWriter.cafFilePath = [path stringByAppendingPathComponent:@"recordAmr.caf"];
     self.amrWriter = amrWriter;
     
     Mp3RecordWriter *mp3Writer = [[Mp3RecordWriter alloc]init];
@@ -63,17 +64,17 @@
     
     
     //caf
-//    recorder.fileWriterDelegate = writer;
-//    self.filePath = writer.filePath;
+    //    recorder.fileWriterDelegate = writer;
+    //    self.filePath = writer.filePath;
     
     //amr
     recorder.bufferDurationSeconds = 0.04;
     recorder.fileWriterDelegate = amrWriter;
-    self.filePath  = amrWriter.filePath;
+    self.filePath  = amrWriter.cafFilePath; //因为能直接播放是的caf文件，所以给予caf文件地址
     
     //mp3
-//    recorder.fileWriterDelegate = mp3Writer;
-//    self.filePath = mp3Writer.filePath;
+    //    recorder.fileWriterDelegate = mp3Writer;
+    //    self.filePath = mp3Writer.filePath;
     
     self.recorder = recorder;
 }
@@ -95,15 +96,13 @@
         //开始录音
         [self.recorder startRecording];
     }
-
+    
 }
 
 - (IBAction)play:(id)sender {
-    //除去amr的都能直接播放
-    if (![self.recorder.fileWriterDelegate isKindOfClass:[AmrRecordWriter class]]){
-        self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
-        [self.player play];
-    }
+    self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
+    [self.player play];
+    
 }
 
 @end

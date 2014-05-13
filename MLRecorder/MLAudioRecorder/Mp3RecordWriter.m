@@ -98,7 +98,7 @@
     return YES;
 }
 
-- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder
+- (BOOL)completeWriteWithRecorder:(MLAudioRecorder*)recoder withIsError:(BOOL)isError
 {
     //关闭就关闭吧。管他关闭成功与否
     
