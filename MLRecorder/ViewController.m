@@ -12,6 +12,7 @@
 #import "AmrRecordWriter.h"
 #import "Mp3RecordWriter.h"
 #import <AVFoundation/AVFoundation.h>
+#import "MLAudioMeterObserver.h"
 
 @interface ViewController ()
 
@@ -24,7 +25,7 @@
 
 @property (nonatomic, copy) NSString *filePath;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
-
+@property (nonatomic, strong) MLAudioMeterObserver *meterObserver;
 @end
 
 @implementation ViewController
@@ -52,13 +53,25 @@
     mp3Writer.maxFileSize = 1024*256;
     self.mp3Writer = mp3Writer;
     
+    MLAudioMeterObserver *meterObserver = [[MLAudioMeterObserver alloc]init];
+    meterObserver.actionBlock = ^(Float32 progress){
+        NSLog(@"volume:%f",progress);
+    };
+    meterObserver.errorBlock = ^(NSError *error){
+        [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
+    };
+    self.meterObserver = meterObserver;
+    
     MLAudioRecorder *recorder = [[MLAudioRecorder alloc]init];
     __weak __typeof(self)weakSelf = self;
     recorder.receiveStoppedBlock = ^{
         [weakSelf.recordButton setTitle:@"Record" forState:UIControlStateNormal];
+        weakSelf.meterObserver.audioQueue = nil;
     };
     recorder.receiveErrorBlock = ^(NSError *error){
         [weakSelf.recordButton setTitle:@"Record" forState:UIControlStateNormal];
+        weakSelf.meterObserver.audioQueue = nil;
+
         [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
     };
     
@@ -95,6 +108,7 @@
         [recordButton setTitle:@"Stop" forState:UIControlStateNormal];
         //开始录音
         [self.recorder startRecording];
+        self.meterObserver.audioQueue = self.recorder->_audioQueue;
     }
     
 }
