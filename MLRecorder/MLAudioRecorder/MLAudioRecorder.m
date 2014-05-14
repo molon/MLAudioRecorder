@@ -67,26 +67,26 @@ return; \
 
 - (void)dealloc
 {
-	[self stopRecording];
+    NSAssert(!self.isRecording, @"MLAudioRecorder dealloc之前必须停止录音");
     
+    if (self.isRecording){
+        [self stopRecording];
+    }
     NSLog(@"MLAudioRecorder dealloc");
 }
 
 
 // 回调函数
-void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer, const AudioTimeStamp *inStartTime,
-                        UInt32 inNumPackets, const AudioStreamPacketDescription *inPacketDesc)
+void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer, const AudioTimeStamp *inStartTime,UInt32 inNumPackets, const AudioStreamPacketDescription *inPacketDesc)
 {
     MLAudioRecorder *recorder = (__bridge MLAudioRecorder*)inUserData;
     
     if (inNumPackets > 0) {
         NSData *pcmData = [[NSData alloc]initWithBytes:inBuffer->mAudioData length:inBuffer->mAudioDataByteSize];
         if (pcmData&&pcmData.length>0) {
-            //写入文件
-            __weak __typeof(recorder)weakSelf = recorder;
             //在后台串行队列中去处理文件写入
             dispatch_async(recorder.writeFileQueue, ^{
-                if(![recorder.fileWriterDelegate writeIntoFileWithData:pcmData withRecorder:weakSelf inAQ:inAQ inStartTime:inStartTime inNumPackets:inNumPackets inPacketDesc:inPacketDesc]){
+                if(recorder.fileWriterDelegate&&![recorder.fileWriterDelegate writeIntoFileWithData:pcmData withRecorder:recorder inAQ:inAQ inStartTime:inStartTime inNumPackets:inNumPackets inPacketDesc:inPacketDesc]){
                     //保证只处理了一次
                     if (dispatch_semaphore_wait(recorder.semError,DISPATCH_TIME_NOW)==0){
                         //回到主线程
@@ -129,7 +129,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     //建立文件,顺便同步下串行队列，防止意外前面有没处理的
     __block BOOL isContinue = YES;;
     dispatch_sync(self.writeFileQueue, ^{
-        if(![self.fileWriterDelegate createFileWithRecorder:self]){
+        if(self.fileWriterDelegate&&![self.fileWriterDelegate createFileWithRecorder:self]){
             dispatch_async(dispatch_get_main_queue(),^{
                 [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutFile andDescription:@"为音频输入建立文件失败"];
             });
@@ -180,7 +180,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         //这里直接做同步
         __block BOOL isContinue = YES;
         dispatch_sync(self.writeFileQueue, ^{
-            if (![self.fileWriterDelegate completeWriteWithRecorder:self withIsError:NO]) {
+            if (self.fileWriterDelegate&&![self.fileWriterDelegate completeWriteWithRecorder:self withIsError:NO]) {
                 dispatch_async(dispatch_get_main_queue(),^{
                     [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutFile andDescription:@"为音频输入关闭文件失败"];
                 });
@@ -242,9 +242,11 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     AudioQueueDispose(_audioQueue, true);
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
     
-    dispatch_sync(self.writeFileQueue, ^{
-        [self.fileWriterDelegate completeWriteWithRecorder:self withIsError:YES];
-    });
+    if(self.fileWriterDelegate){
+        dispatch_sync(self.writeFileQueue, ^{
+            [self.fileWriterDelegate completeWriteWithRecorder:self withIsError:YES];
+        });
+    }
     
     NSLog(@"录音发生错误");
     

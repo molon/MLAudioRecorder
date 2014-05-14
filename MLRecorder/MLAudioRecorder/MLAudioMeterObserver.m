@@ -44,6 +44,9 @@ return; \
 
 - (void)dealloc
 {
+    [self.timer invalidate];
+    self.timer = nil;
+    
 	NSLog(@"MLAudioMeterObserver dealloc");
 }
 
@@ -120,6 +123,7 @@ return; \
 - (void)refresh
 {
     UInt32 data_sz = sizeof(AudioQueueLevelMeterState) * self.channelCount;
+
     IfAudioQueueErrorPostAndReturn(AudioQueueGetProperty(_audioQueue, kAudioQueueProperty_CurrentLevelMeterDB, _levelMeterStates, &data_sz),@"获取meter数据失败");
     
     //转化成LevelMeterState数组传递到block

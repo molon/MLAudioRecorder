@@ -30,6 +30,11 @@
 
 @implementation ViewController
 
+- (void)dealloc
+{
+	[self.recorder stopRecording];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
