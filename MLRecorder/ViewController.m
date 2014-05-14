@@ -54,10 +54,10 @@
     self.mp3Writer = mp3Writer;
     
     MLAudioMeterObserver *meterObserver = [[MLAudioMeterObserver alloc]init];
-    meterObserver.actionBlock = ^(Float32 progress){
-        NSLog(@"volume:%f",progress);
+    meterObserver.actionBlock = ^(NSArray *levelMeterStates,MLAudioMeterObserver *meterObserver){
+        NSLog(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
     };
-    meterObserver.errorBlock = ^(NSError *error){
+    meterObserver.errorBlock = ^(NSError *error,MLAudioMeterObserver *meterObserver){
         [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
     };
     self.meterObserver = meterObserver;
@@ -110,7 +110,6 @@
         [self.recorder startRecording];
         self.meterObserver.audioQueue = self.recorder->_audioQueue;
     }
-    
 }
 
 - (IBAction)play:(id)sender {

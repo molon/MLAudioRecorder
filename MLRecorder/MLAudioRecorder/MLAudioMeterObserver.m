@@ -17,6 +17,9 @@ if(operation!=noErr) { \
 return; \
 }   \
 
+@implementation LevelMeterState
+@end
+
 @interface MLAudioMeterObserver()
 
 @property (nonatomic, strong) NSTimer *timer;
@@ -118,20 +121,20 @@ return; \
 {
     UInt32 data_sz = sizeof(AudioQueueLevelMeterState) * self.channelCount;
     IfAudioQueueErrorPostAndReturn(AudioQueueGetProperty(_audioQueue, kAudioQueueProperty_CurrentLevelMeterDB, _levelMeterStates, &data_sz),@"获取meter数据失败");
-    Float32 averagePowerOfChannels = 0;
+    
+    //转化成LevelMeterState数组传递到block
+    NSMutableArray *meters = [NSMutableArray arrayWithCapacity:self.channelCount];
+    
     for (int i=0; i<self.channelCount; i++)
     {
-        averagePowerOfChannels+=_levelMeterStates[i].mAveragePower;
+        LevelMeterState *state = [[LevelMeterState alloc]init];
+        state.mAveragePower = _levelMeterStates[i].mAveragePower;
+        state.mPeakPower = _levelMeterStates[i].mPeakPower;
+        [meters addObject:state];
     }
-    
-    //获取音量百分比，姑且这么叫吧
-    Float32 progress = pow(10, (0.05 * averagePowerOfChannels/self.channelCount));
-    
-    
     if(self.actionBlock){
-        self.actionBlock(progress);
+        self.actionBlock(meters,self);
     }
-
 }
 
 
@@ -144,9 +147,25 @@ return; \
     NSError *error = [NSError errorWithDomain:kMLAudioMeterObserverErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
     
     if( self.errorBlock){
-        self.errorBlock(error);
+        self.errorBlock(error,self);
     }
 }
 
+
++ (Float32)volumeForLevelMeterStates:(NSArray*)levelMeterStates
+{
+    
+    Float32 averagePowerOfChannels = 0;
+    for (int i=0; i<levelMeterStates.count; i++)
+    {
+        averagePowerOfChannels+=((LevelMeterState*)levelMeterStates[i]).mAveragePower;
+    }
+    
+    //获取音量百分比，姑且这么叫吧
+    Float32 volume = pow(10, (0.05 * averagePowerOfChannels/levelMeterStates.count));
+    
+    
+    return volume;
+}
 
 @end

@@ -81,23 +81,21 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     
     if (inNumPackets > 0) {
         NSData *pcmData = [[NSData alloc]initWithBytes:inBuffer->mAudioData length:inBuffer->mAudioDataByteSize];
-        if (pcmData) {
+        if (pcmData&&pcmData.length>0) {
             //写入文件
             __weak __typeof(recorder)weakSelf = recorder;
-            if(recorder.fileWriterDelegate&&[recorder.fileWriterDelegate respondsToSelector:@selector(writeIntoFileWithData:withRecorder:inAQ:inStartTime:inNumPackets:inPacketDesc:)]){
-                //在后台串行队列中去处理文件写入
-                dispatch_async(recorder.writeFileQueue, ^{
-                    if(![recorder.fileWriterDelegate writeIntoFileWithData:pcmData withRecorder:weakSelf inAQ:inAQ inStartTime:inStartTime inNumPackets:inNumPackets inPacketDesc:inPacketDesc]){
-                        //保证只处理了一次
-                        if (dispatch_semaphore_wait(recorder.semError,DISPATCH_TIME_NOW)==0){
-                            //回到主线程
-                            dispatch_async(dispatch_get_main_queue(),^{
-                                [recorder postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutFile andDescription:@"写入文件失败"];
-                            });
-                        }
+            //在后台串行队列中去处理文件写入
+            dispatch_async(recorder.writeFileQueue, ^{
+                if(![recorder.fileWriterDelegate writeIntoFileWithData:pcmData withRecorder:weakSelf inAQ:inAQ inStartTime:inStartTime inNumPackets:inNumPackets inPacketDesc:inPacketDesc]){
+                    //保证只处理了一次
+                    if (dispatch_semaphore_wait(recorder.semError,DISPATCH_TIME_NOW)==0){
+                        //回到主线程
+                        dispatch_async(dispatch_get_main_queue(),^{
+                            [recorder postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutFile andDescription:@"写入文件失败"];
+                        });
                     }
-                });
-            }
+                }
+            });
         }
     }
     if (recorder.isRecording) {
