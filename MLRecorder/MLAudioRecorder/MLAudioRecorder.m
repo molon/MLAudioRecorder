@@ -68,10 +68,11 @@ return; \
 - (void)dealloc
 {
     NSAssert(!self.isRecording, @"MLAudioRecorder dealloc之前必须停止录音");
-    
-    if (self.isRecording){
-        [self stopRecording];
-    }
+
+    //由于上面做了需要在外部调用stopRecording的限制，下面这块不需要了。
+//    if (self.isRecording){
+//        [self stopRecording];
+//    }
     NSLog(@"MLAudioRecorder dealloc");
 }
 
