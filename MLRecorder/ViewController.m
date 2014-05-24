@@ -137,7 +137,22 @@
 //    [self.recordButton addTarget:self action:@selector(upOutSide) forControlEvents:UIControlEventTouchUpOutside];
 //    [self.recordButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchCancel];
     
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioSessionDidChangeInterruptionType:)
+                                                 name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
+}
+
+- (void)audioSessionDidChangeInterruptionType:(NSNotification *)notification
+{
+    AVAudioSessionInterruptionType interruptionType = [[[notification userInfo]
+                                                        objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    if (AVAudioSessionInterruptionTypeBegan == interruptionType)
+    {
+        NSLog(@"begin");
+    }
+    else if (AVAudioSessionInterruptionTypeEnded == interruptionType)
+    {
+        NSLog(@"end");
+    }
 }
 
 - (void)didReceiveMemoryWarning

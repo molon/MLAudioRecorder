@@ -57,6 +57,9 @@ return; \
         
         self.sampleRate = kDefaultSampleRate;
         self.bufferDurationSeconds = kDefaultBufferDurationSeconds;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionInterruption:)
+                                                     name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
     }
     return self;
 }
@@ -69,6 +72,8 @@ return; \
     //    if (self.isRecording){
     //        [self stopRecording];
     //    }
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     NSLog(@"MLAudioRecorder dealloc");
 }
 
@@ -112,7 +117,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     
     NSError *error = nil;
     //设置audio session的category
-    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:&error];
+    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
     if (!ret) {
         [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutSession andDescription:@"为AVAudioSession设置Category失败"];
         return;
@@ -275,4 +280,19 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     }
 }
 
+#pragma mark - notification
+- (void)sessionInterruption:(NSNotification *)notification {
+    AVAudioSessionInterruptionType interruptionType = [[[notification userInfo]
+                                                        objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    if (AVAudioSessionInterruptionTypeBegan == interruptionType)
+    {
+        NSLog(@"begin interruption");
+        //直接停止录音
+        [self stopRecording];
+    }
+    else if (AVAudioSessionInterruptionTypeEnded == interruptionType)
+    {
+        NSLog(@"end interruption");
+    }
+}
 @end
