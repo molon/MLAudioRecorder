@@ -15,7 +15,6 @@
 
 #define kNumberAudioQueueBuffers 3
 
-
 #define IfAudioQueueErrorPostAndReturn(operation,error) \
 do{\
 if(operation!=noErr) { \
@@ -33,6 +32,8 @@ return; \
 
 @property (nonatomic, assign) NSUInteger bufferByteSize;
 
+@property (nonatomic, assign) BOOL isPlayDone;//是否正常的播放完毕
+
 @end
 
 @implementation MLAudioPlayer
@@ -41,16 +42,43 @@ return; \
 {
     self = [super init];
     if (self) {
+        self.isPlayDone = YES;
     }
     return self;
 }
 
+- (void)dealloc
+{
+    //	NSAssert(!self.isPlaying, @"MLAudioPlayer dealloc之前必须停止播放");
+    
+    if (self.isPlaying){
+        [self stopPlaying];
+    }
+    NSLog(@"MLAudioPlayer dealloc");
+}
+
 #pragma mark - read data callback
+
+void isRunningProc (void * inUserData,AudioQueueRef inAQ,AudioQueuePropertyID inID)
+{
+	MLAudioPlayer *player = (__bridge MLAudioPlayer*)inUserData;
+    
+    UInt32 isRunning;
+	UInt32 size = sizeof(isRunning);
+	OSStatus result = AudioQueueGetProperty (inAQ, kAudioQueueProperty_IsRunning, &isRunning, &size);
+	
+	if ((result == noErr) && (!isRunning)){
+        [player performSelector:@selector(stopPlaying) withObject:nil afterDelay:0.01f];
+    }
+}
 
 void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef inCompleteAQBuffer)
 {
     MLAudioPlayer *player = (__bridge MLAudioPlayer*)inUserData;
     
+    if (player.isPlayDone) {
+        return;
+    }
     //获取数据放进去
     NSData *data = nil;
     if (player.fileReaderDelegate) {
@@ -65,15 +93,13 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
         memcpy(inCompleteAQBuffer->mAudioData, data.bytes, data.length);
         inCompleteAQBuffer->mAudioDataByteSize = data.length;
 		inCompleteAQBuffer->mPacketDescriptionCount = 0;
-    }else{
-        NSLog(@"无数据播放了");
-        return;
-    }
-    
-    if (player.isPlaying) {
+        
         if(AudioQueueEnqueueBuffer(inAQ, inCompleteAQBuffer, 0, NULL)!=noErr){
             [player postAErrorWithErrorCode:MLAudioPlayerErrorCodeAboutQueue andDescription:@"重准备音频输出缓存区失败"];
         }
+    }else{
+        player.isPlayDone = YES;
+        AudioQueueStop(inAQ, false); //注意这里是
     }
 }
 
@@ -113,20 +139,25 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
         return;
     }
     
-    
     //得到format
     AudioStreamBasicDescription format = [self.fileReaderDelegate customAudioFormatAfterOpenFile];
     memcpy(&_audioFormat, &format, sizeof(_audioFormat));
     
-    
-#warning - 这里应该检查下format是否有效，无效就抛出错误，检查是否有mFramesPerPacket和mBytesPerPacket是否为0，为0也不行，不支持可变速率
+    //简单检测下不支持可变速率
+    if (_audioFormat.mFramesPerPacket<=0||_audioFormat.mBytesPerPacket<=0) {
+        [self postAErrorWithErrorCode:MLAudioPlayerErrorCodeAboutOther andDescription:@"format 设置有误，此player不支持VBR"];
+        return;
+    }
     
     //设置音频输出队列
-    IfAudioQueueErrorPostAndReturn(AudioQueueNewOutput(&_audioFormat, outBufferHandler, (__bridge void *)(self), NULL, NULL, 0, &_audioQueue),@"音频输出队列初始化失败");
+    IfAudioQueueErrorPostAndReturn(AudioQueueNewOutput(&_audioFormat, outBufferHandler, (__bridge void *)(self), CFRunLoopGetCurrent(), kCFRunLoopCommonModes, 0, &_audioQueue),@"音频输出队列初始化失败");
+    
+    //设置正在运行的回调，这个还真不知道啥时候执行，回头测试下
+	IfAudioQueueErrorPostAndReturn(AudioQueueAddPropertyListener(_audioQueue, kAudioQueueProperty_IsRunning,isRunningProc, (__bridge void *)(self)), @"adding property listener");
     
     //计算估算的缓存区大小，这里我们忽略可变速率的情况
-    static const int maxBufferSize = 0x10000; // limit size to 64K
-	static const int minBufferSize = 0x4000; // limit size to 16K
+    static const int maxBufferSize = 0x10000;
+	static const int minBufferSize = 0x4000;
 	
     //每秒采集的帧数/每个packet有的帧数，算出来每秒有多少packet，然后乘以秒数，即为inSeconds时间里需要的packet数目
     //最后乘以参数给予的buffer最大的packet数目。即为估算的保守的buffer大小
@@ -134,7 +165,6 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
     int bufferByteSize = ceil(numPacketsForTime * _audioFormat.mBytesPerPacket);
 	bufferByteSize = bufferByteSize>maxBufferSize?maxBufferSize:bufferByteSize;
     bufferByteSize = bufferByteSize<minBufferSize?minBufferSize:bufferByteSize;
-//    bufferByteSize = 8000;
     self.bufferByteSize = bufferByteSize;
     NSLog(@"缓冲区大小:%d",bufferByteSize);
     
@@ -152,12 +182,15 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 #pragma mark - control
 - (void)startPlaying
 {
-    if (!self.isPlaying) {
-        [self setUpNewPlay];
-        
-        for (int i = 0; i < kNumberAudioQueueBuffers; ++i) {
-            outBufferHandler((__bridge void *)(self), _audioQueue, _audioBuffers[i]);
-        }
+    NSAssert(!self.isPlaying, @"播放必须先停止上一个才可开始新的");
+    
+    [self setUpNewPlay];
+    
+    self.isPlayDone = NO;
+    
+    //输出的buffer必须先填满一次才能准备下一次buffer
+    for (int i = 0; i < kNumberAudioQueueBuffers; ++i) {
+        outBufferHandler((__bridge void *)(self), _audioQueue, _audioBuffers[i]);
     }
     
     IfAudioQueueErrorPostAndReturn(AudioQueueStart(_audioQueue, NULL),@"音频输出启动失败");
@@ -170,6 +203,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
         return;
     }
     
+    self.isPlayDone = YES; //和isPlaying的区别是这个是给里面看的，那个是给外面看的
     self.isPlaying = NO;
     
     AudioQueueStop(_audioQueue, true);
@@ -190,8 +224,14 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 
 - (void)postAErrorWithErrorCode:(MLAudioPlayerErrorCode)code andDescription:(NSString*)description
 {
+    self.isPlayDone = YES;
     self.isPlaying = NO;
     
+    AudioQueueStop(_audioQueue, true);
+    AudioQueueDispose(_audioQueue, true);
+    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+    
+    [self.fileReaderDelegate completeReadWithPlayer:self withIsError:YES];
     NSLog(@"播放发生错误");
     
     NSError *error = [NSError errorWithDomain:kMLAudioPlayerErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];

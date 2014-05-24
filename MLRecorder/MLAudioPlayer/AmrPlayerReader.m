@@ -133,6 +133,9 @@ BOOL ReadAMRFrameFirst(FILE* fpamr, int* stdFrameSize, unsigned char* stdFrameHe
 - (NSData*)readDataFromFileWithPlayer:(MLAudioPlayer*)player andBufferSize:(NSUInteger)bufferSize error:(NSError**)error
 {
     //读取数据
+    if (!_file) {
+        return nil;
+    }
     
     //计算存储到bufferSize里需要读取多少帧
     int needReadFrameCount = floor(bufferSize/(PCM_FRAME_SIZE*sizeof(short)));
