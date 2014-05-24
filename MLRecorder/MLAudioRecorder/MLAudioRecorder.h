@@ -36,6 +36,9 @@ typedef NS_OPTIONS(NSUInteger, MLAudioRecorderErrorCode) {
  */
 @protocol FileWriterForMLAudioRecorder <NSObject>
 
+@optional
+- (AudioStreamBasicDescription)customAudioFormatBeforeCreateFile;
+
 @required
 /**
  *  在录音开始时候建立文件和写入文件头信息等操作

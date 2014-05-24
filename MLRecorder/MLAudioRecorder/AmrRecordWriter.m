@@ -30,6 +30,7 @@
 
 - (BOOL)createFileWithRecorder:(MLAudioRecorder*)recoder;
 {
+    _destate = 0;
     // amr 压缩句柄
     _destate = Encoder_Interface_init(0);
     
@@ -60,7 +61,7 @@
     recordPacketCount = 0;
     
     CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, (CFStringRef)self.cafFilePath, NULL);
-    OSStatus err = AudioFileCreateWithURL(url, kAudioFileCAFType, (const AudioStreamBasicDescription	*)(&(recoder->_recordFormat)), kAudioFileFlags_EraseFile, &mRecordFile);
+    OSStatus err = AudioFileCreateWithURL(url, kAudioFileCAFType, (const AudioStreamBasicDescription*)(&(recoder->_recordFormat)), kAudioFileFlags_EraseFile, &mRecordFile);
     CFRelease(url);
     
     return err==noErr;

@@ -24,15 +24,15 @@
  */
 #define kDefaultSampleRate 8000
 
-
 #define kMLAudioRecorderErrorDomain @"MLAudioRecorderErrorDomain"
 
-
 #define IfAudioQueueErrorPostAndReturn(operation,error) \
+do{\
 if(operation!=noErr) { \
 [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutQueue andDescription:error]; \
 return; \
 }   \
+}while(0)
 
 @interface MLAudioRecorder()
 {
@@ -48,7 +48,7 @@ return; \
 
 @implementation MLAudioRecorder
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
@@ -57,10 +57,6 @@ return; \
         
         self.sampleRate = kDefaultSampleRate;
         self.bufferDurationSeconds = kDefaultBufferDurationSeconds;
-        
-        //设置录音的format数据
-        [self setupAudioFormat:kAudioFormatLinearPCM SampleRate:self.sampleRate];
-        
     }
     return self;
 }
@@ -68,11 +64,11 @@ return; \
 - (void)dealloc
 {
     NSAssert(!self.isRecording, @"MLAudioRecorder dealloc之前必须停止录音");
-
+    
     //由于上面做了需要在外部调用stopRecording的限制，下面这块不需要了。
-//    if (self.isRecording){
-//        [self stopRecording];
-//    }
+    //    if (self.isRecording){
+    //        [self stopRecording];
+    //    }
     NSLog(@"MLAudioRecorder dealloc");
 }
 
@@ -100,7 +96,13 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         }
     }
     if (recorder.isRecording) {
-        AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+#warning 这里需要做下信号量处理。。。。。
+        if(AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL)!=noErr){
+            //回到主线程
+            dispatch_async(dispatch_get_main_queue(),^{
+                [recorder postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutQueue andDescription:@"重准备音频输入缓存区失败"];
+            });
+        }
     }
 }
 
@@ -127,6 +129,18 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         return;
     }
     
+    //设置录音的format数据
+    if (self.fileWriterDelegate&&[self.fileWriterDelegate respondsToSelector:@selector(customAudioFormatBeforeCreateFile)]) {
+        dispatch_sync(self.writeFileQueue, ^{
+            AudioStreamBasicDescription format = [self.fileWriterDelegate customAudioFormatBeforeCreateFile];
+            memcpy(&_recordFormat, &format,sizeof(_recordFormat));
+        });
+    }else{
+        [self setupAudioFormat:kAudioFormatLinearPCM SampleRate:self.sampleRate];
+    }
+    _recordFormat.mSampleRate = self.sampleRate;
+    
+    
     //建立文件,顺便同步下串行队列，防止意外前面有没处理的
     __block BOOL isContinue = YES;;
     dispatch_sync(self.writeFileQueue, ^{
@@ -143,9 +157,6 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     
     self.semError = dispatch_semaphore_create(0); //重新初始化信号量标识
     dispatch_semaphore_signal(self.semError); //设置有一个信号
-    
-    _recordFormat.mSampleRate = self.sampleRate;
-    
     
     //设置录音的回调函数
     IfAudioQueueErrorPostAndReturn(AudioQueueNewInput(&_recordFormat, inputBufferHandler, (__bridge void *)(self), NULL, NULL, 0, &_audioQueue),@"音频输入队列初始化失败");

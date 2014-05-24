@@ -87,6 +87,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="1B1-uy-EBx"/>
                     <connections>
+                        <outlet property="playButton" destination="LsC-71-6jV" id="voK-zS-fIv"/>
                         <outlet property="recordButton" destination="1DF-do-eG8" id="YOJ-eE-yKX"/>
                     </connections>
                 </viewController>

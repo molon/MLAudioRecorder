@@ -14,6 +14,9 @@
 #import <AVFoundation/AVFoundation.h>
 #import "MLAudioMeterObserver.h"
 
+#import "MLAudioPlayer.h"
+#import "AmrPlayerReader.h"
+
 @interface ViewController ()
 
 @property (nonatomic, strong) MLAudioRecorder *recorder;
@@ -21,10 +24,14 @@
 @property (nonatomic, strong) AmrRecordWriter *amrWriter;
 @property (nonatomic, strong) Mp3RecordWriter *mp3Writer;
 
-@property (nonatomic, strong) AVAudioPlayer *player;
+@property (nonatomic, strong) MLAudioPlayer *player;
+@property (nonatomic, strong) AmrPlayerReader *amrReader;
+
+//@property (nonatomic, strong) AVAudioPlayer *player;
 
 @property (nonatomic, copy) NSString *filePath;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (nonatomic, strong) MLAudioMeterObserver *meterObserver;
 @end
 
@@ -62,7 +69,7 @@
     
     MLAudioMeterObserver *meterObserver = [[MLAudioMeterObserver alloc]init];
     meterObserver.actionBlock = ^(NSArray *levelMeterStates,MLAudioMeterObserver *meterObserver){
-        NSLog(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
+//        NSLog(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
     };
     meterObserver.errorBlock = ^(NSError *error,MLAudioMeterObserver *meterObserver){
         [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
@@ -88,7 +95,7 @@
     //    self.filePath = writer.filePath;
     
     //amr
-    recorder.bufferDurationSeconds = 0.04;
+    recorder.bufferDurationSeconds = 0.5;
     recorder.fileWriterDelegate = amrWriter;
     self.filePath  = amrWriter.cafFilePath; //因为能直接播放是的caf文件，所以给予caf文件地址
     
@@ -97,6 +104,25 @@
     //    self.filePath = mp3Writer.filePath;
     
     self.recorder = recorder;
+    
+    
+    
+    
+    MLAudioPlayer *player = [[MLAudioPlayer alloc]init];
+    AmrPlayerReader *amrReader = [[AmrPlayerReader alloc]init];
+    
+    player.fileReaderDelegate = amrReader;
+    player.receiveErrorBlock = ^(NSError *error){
+        [weakSelf.playButton setTitle:@"Play" forState:UIControlStateNormal];
+        
+        [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
+    };
+    player.receiveStoppedBlock = ^{
+        [weakSelf.playButton setTitle:@"Play" forState:UIControlStateNormal];
+    };
+    self.player = player;
+    self.amrReader = amrReader;
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -120,8 +146,20 @@
 }
 
 - (IBAction)play:(id)sender {
-    self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
-    [self.player play];
+     NSString *filePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"test2.amr"];
+    
+//    self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
+//    [self.player play];
+    self.amrReader.filePath = filePath;
+    
+    UIButton *playButton = (UIButton*)sender;
+    
+    if (self.player.isStarted) {
+        [self.player stop];
+    }else{
+        [playButton setTitle:@"Stop" forState:UIControlStateNormal];
+        [self.player play];
+    }
     
 }
 

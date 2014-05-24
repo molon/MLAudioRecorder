@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36197FFC192F2E9C00C9198F /* test.amr in Resources */ = {isa = PBXBuildFile; fileRef = 36C3B7E1192C798F00B6063D /* test.amr */; };
+		36258DF1192DFA5E0051388E /* MLAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 36258DF0192DFA5E0051388E /* MLAudioPlayer.m */; };
+		36258DF4192F0A0F0051388E /* AmrPlayerReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 36258DF3192F0A0F0051388E /* AmrPlayerReader.m */; };
+		368DCC29192FC436001F3574 /* test2.amr in Resources */ = {isa = PBXBuildFile; fileRef = 368DCC28192FC3EF001F3574 /* test2.amr */; };
 		369BEF6A1922094A00CAF381 /* MLAudioMeterObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 369BEF691922094A00CAF381 /* MLAudioMeterObserver.m */; };
 		36D909E01921D2B1000D6825 /* libopencore-amrnb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 36D909DE1921D2B1000D6825 /* libopencore-amrnb.a */; };
 		36D909E11921D2B1000D6825 /* libopencore-amrwb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 36D909DF1921D2B1000D6825 /* libopencore-amrwb.a */; };
@@ -44,8 +48,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		36258DEF192DFA5E0051388E /* MLAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioPlayer.h; sourceTree = "<group>"; };
+		36258DF0192DFA5E0051388E /* MLAudioPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioPlayer.m; sourceTree = "<group>"; };
+		36258DF2192F0A0F0051388E /* AmrPlayerReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmrPlayerReader.h; sourceTree = "<group>"; };
+		36258DF3192F0A0F0051388E /* AmrPlayerReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmrPlayerReader.m; sourceTree = "<group>"; };
+		368DCC28192FC3EF001F3574 /* test2.amr */ = {isa = PBXFileReference; lastKnownFileType = file; path = test2.amr; sourceTree = "<group>"; };
 		369BEF681922094A00CAF381 /* MLAudioMeterObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioMeterObserver.h; sourceTree = "<group>"; };
 		369BEF691922094A00CAF381 /* MLAudioMeterObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioMeterObserver.m; sourceTree = "<group>"; };
+		36C3B7E1192C798F00B6063D /* test.amr */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.amr; sourceTree = "<group>"; };
 		36D909D81921D2B1000D6825 /* interf_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_dec.h; sourceTree = "<group>"; };
 		36D909D91921D2B1000D6825 /* interf_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_enc.h; sourceTree = "<group>"; };
 		36D909DB1921D2B1000D6825 /* dec_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dec_if.h; sourceTree = "<group>"; };
@@ -114,6 +124,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		36258DEE192DFA420051388E /* MLAudioPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				36258DEF192DFA5E0051388E /* MLAudioPlayer.h */,
+				36258DF0192DFA5E0051388E /* MLAudioPlayer.m */,
+				36258DF2192F0A0F0051388E /* AmrPlayerReader.h */,
+				36258DF3192F0A0F0051388E /* AmrPlayerReader.m */,
+			);
+			path = MLAudioPlayer;
+			sourceTree = "<group>";
+		};
 		36D909D51921D2B1000D6825 /* amr_en_de */ = {
 			isa = PBXGroup;
 			children = (
@@ -203,6 +224,9 @@
 		36DE7E7C1921060C00E3067D /* MLRecorder */ = {
 			isa = PBXGroup;
 			children = (
+				36258DEE192DFA420051388E /* MLAudioPlayer */,
+				36C3B7E1192C798F00B6063D /* test.amr */,
+				368DCC28192FC3EF001F3574 /* test2.amr */,
 				36DE7EB8192106B400E3067D /* MLAudioRecorder */,
 				36DE7E851921060D00E3067D /* AppDelegate.h */,
 				36DE7E861921060D00E3067D /* AppDelegate.m */,
@@ -339,6 +363,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				368DCC29192FC436001F3574 /* test2.amr in Resources */,
+				36197FFC192F2E9C00C9198F /* test.amr in Resources */,
 				36DE7E8F1921060D00E3067D /* Images.xcassets in Resources */,
 				36DE7E811921060D00E3067D /* InfoPlist.strings in Resources */,
 				36DE7E8A1921060D00E3067D /* Main.storyboard in Resources */,
@@ -363,10 +389,12 @@
 				36DE7EBF192106C300E3067D /* AmrRecordWriter.m in Sources */,
 				369BEF6A1922094A00CAF381 /* MLAudioMeterObserver.m in Sources */,
 				36DE7EC0192106C300E3067D /* CafRecordWriter.m in Sources */,
+				36258DF1192DFA5E0051388E /* MLAudioPlayer.m in Sources */,
 				36DE7E8D1921060D00E3067D /* ViewController.m in Sources */,
 				36DE7EC1192106C300E3067D /* MLAudioRecorder.m in Sources */,
 				36DE7E871921060D00E3067D /* AppDelegate.m in Sources */,
 				36D909E41921D2C2000D6825 /* Mp3RecordWriter.m in Sources */,
+				36258DF4192F0A0F0051388E /* AmrPlayerReader.m in Sources */,
 				36DE7E831921060D00E3067D /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
