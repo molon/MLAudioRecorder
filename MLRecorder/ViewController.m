@@ -167,11 +167,11 @@
     
     UIButton *playButton = (UIButton*)sender;
     
-    if (self.player.isStarted) {
-        [self.player stop];
+    if (self.player.isPlaying) {
+        [self.player stopPlaying];
     }else{
         [playButton setTitle:@"Stop" forState:UIControlStateNormal];
-        [self.player play];
+        [self.player startPlaying];
     }
     
 }

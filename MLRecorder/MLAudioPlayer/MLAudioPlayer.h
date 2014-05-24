@@ -45,15 +45,14 @@ typedef NS_OPTIONS(NSUInteger, MLAudioPlayerErrorCode) {
 }
 
 
-@property (nonatomic, assign) BOOL isStarted;
+@property (nonatomic, assign) BOOL isPlaying;
 
 @property (nonatomic, weak) id<FileReaderForMLAudioPlayer> fileReaderDelegate;
 
 @property (nonatomic, copy) MLAudioPlayerReceiveErrorBlock receiveErrorBlock;
 @property (nonatomic, copy) MLAudioPlayerReceiveStoppedBlock receiveStoppedBlock;
 
-- (void)play;
-- (void)pasuse;
-- (void)stop;
+- (void)startPlaying;
+- (void)stopPlaying;
 
 @end

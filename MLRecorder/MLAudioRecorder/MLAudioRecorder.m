@@ -96,8 +96,8 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         }
     }
     if (recorder.isRecording) {
-#warning 这里需要做下信号量处理。。。。。
         if(AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL)!=noErr){
+            recorder.isRecording = NO; //这里直接设置下，能防止队列中3个缓存，重复post error
             //回到主线程
             dispatch_async(dispatch_get_main_queue(),^{
                 [recorder postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutQueue andDescription:@"重准备音频输入缓存区失败"];
@@ -110,7 +110,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
 {
     NSError *error = nil;
     //设置audio session的category
-    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:&error];
     if (!ret) {
         [self postAErrorWithErrorCode:MLAudioRecorderErrorCodeAboutSession andDescription:@"为AVAudioSession设置Category失败"];
         return;

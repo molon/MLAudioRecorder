@@ -70,7 +70,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
         return;
     }
     
-    if (player.isStarted) {
+    if (player.isPlaying) {
         if(AudioQueueEnqueueBuffer(inAQ, inCompleteAQBuffer, 0, NULL)!=noErr){
             [player postAErrorWithErrorCode:MLAudioPlayerErrorCodeAboutQueue andDescription:@"重准备音频输出缓存区失败"];
         }
@@ -146,13 +146,13 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
     // 开始录音
     IfAudioQueueErrorPostAndReturn(AudioQueueSetParameter(_audioQueue, kAudioQueueParam_Volume, 1.0),@"为音频输出设置音量失败");
     
-    self.isStarted = YES;
+    self.isPlaying = YES;
 }
 
 #pragma mark - control
-- (void)play
+- (void)startPlaying
 {
-    if (!self.isStarted) {
+    if (!self.isPlaying) {
         [self setUpNewPlay];
         
         for (int i = 0; i < kNumberAudioQueueBuffers; ++i) {
@@ -163,20 +163,14 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
     IfAudioQueueErrorPostAndReturn(AudioQueueStart(_audioQueue, NULL),@"音频输出启动失败");
 }
 
-- (void)pasuse
-{
-    if (self.isStarted) {
-        AudioQueuePause(_audioQueue);
-    }
-}
 
-- (void)stop
+- (void)stopPlaying
 {
-    if (!self.isStarted) {
+    if (!self.isPlaying) {
         return;
     }
     
-    self.isStarted = NO;
+    self.isPlaying = NO;
     
     AudioQueueStop(_audioQueue, true);
     AudioQueueDispose(_audioQueue, true);
@@ -196,7 +190,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 
 - (void)postAErrorWithErrorCode:(MLAudioPlayerErrorCode)code andDescription:(NSString*)description
 {
-    self.isStarted = NO;
+    self.isPlaying = NO;
     
     NSLog(@"播放发生错误");
     
