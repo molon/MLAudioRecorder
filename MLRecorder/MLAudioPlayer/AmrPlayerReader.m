@@ -112,7 +112,8 @@ BOOL ReadAMRFrameFirst(FILE* fpamr, int* stdFrameSize, unsigned char* stdFrameHe
     if(!ReadAMRFrameFirst(_file, &_stdFrameSize, &_stdFrameHeader)){
         return NO;
     }
-	
+	NSLog(@"帧大小%d,帧头%c",_stdFrameSize,_stdFrameHeader);
+    
     return YES;
 }
 

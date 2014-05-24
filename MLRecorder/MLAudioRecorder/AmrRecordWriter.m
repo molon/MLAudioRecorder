@@ -101,7 +101,7 @@
         
         memset(buffer, 0, sizeof(buffer));
         //encode
-        int recvLen = Encoder_Interface_Encode(_destate,MR122,pPacket,buffer,0);
+        int recvLen = Encoder_Interface_Encode(_destate,MR515,pPacket,buffer,0);
         if (recvLen>0) {
             if (self.maxFileSize>0){
                 if(self.recordedFileSize+recvLen>self.maxFileSize){

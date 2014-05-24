@@ -123,6 +123,19 @@
     self.player = player;
     self.amrReader = amrReader;
 
+    
+    
+    
+    
+    //button event test
+//    [self.recordButton addTarget:self action:@selector(dragInside) forControlEvents:UIControlEventTouchDragInside];
+//    [self.recordButton addTarget:self action:@selector(dragOutside) forControlEvents:UIControlEventTouchDragOutside];
+//    [self.recordButton addTarget:self action:@selector(dragEnter) forControlEvents:UIControlEventTouchDragEnter];
+//    [self.recordButton addTarget:self action:@selector(dragExit) forControlEvents:UIControlEventTouchDragExit];
+//    [self.recordButton addTarget:self action:@selector(upOutSide) forControlEvents:UIControlEventTouchUpOutside];
+//    [self.recordButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchCancel];
+    
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -150,7 +163,7 @@
     
 //    self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
 //    [self.player play];
-    self.amrReader.filePath = filePath;
+    self.amrReader.filePath = self.amrWriter.filePath;
     
     UIButton *playButton = (UIButton*)sender;
     
@@ -161,6 +174,32 @@
         [self.player play];
     }
     
+}
+
+
+- (void)dragOutside
+{
+    NSLog(@"dragOutside");
+}
+- (void)dragInside
+{
+    NSLog(@"dragInside");
+}
+- (void)dragEnter
+{
+    NSLog(@"dragEnter");
+}
+- (void)dragExit
+{
+    NSLog(@"dragExit");
+}
+- (void)upOutSide
+{
+    NSLog(@"upOutSide");
+}
+- (void)cancel
+{
+    NSLog(@"cancel");
 }
 
 @end
