@@ -42,6 +42,8 @@
     //音谱检测关联着录音类，录音类要停止了。所以要设置其audioQueue为nil
     self.meterObserver.audioQueue = nil;
 	[self.recorder stopRecording];
+    
+    [self.player stopPlaying];
 }
 
 - (void)viewDidLoad

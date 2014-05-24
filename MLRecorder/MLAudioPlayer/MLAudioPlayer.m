@@ -49,11 +49,11 @@ return; \
 
 - (void)dealloc
 {
-    //	NSAssert(!self.isPlaying, @"MLAudioPlayer dealloc之前必须停止播放");
+    NSAssert(!self.isPlaying, @"MLAudioPlayer dealloc之前必须停止播放");
     
-    if (self.isPlaying){
-        [self stopPlaying];
-    }
+//    if (self.isPlaying){
+//        [self stopPlaying];
+//    }
     NSLog(@"MLAudioPlayer dealloc");
 }
 
@@ -99,7 +99,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
         }
     }else{
         player.isPlayDone = YES;
-        AudioQueueStop(inAQ, false); //注意这里是
+        AudioQueueStop(inAQ, false); //注意这里是停止没错但是传递的false，不会停止当前未完成的播放。
     }
 }
 

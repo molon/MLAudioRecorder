@@ -225,9 +225,9 @@
 			isa = PBXGroup;
 			children = (
 				36258DEE192DFA420051388E /* MLAudioPlayer */,
+				36DE7EB8192106B400E3067D /* MLAudioRecorder */,
 				36C3B7E1192C798F00B6063D /* test.amr */,
 				368DCC28192FC3EF001F3574 /* test2.amr */,
-				36DE7EB8192106B400E3067D /* MLAudioRecorder */,
 				36DE7E851921060D00E3067D /* AppDelegate.h */,
 				36DE7E861921060D00E3067D /* AppDelegate.m */,
 				36DE7E881921060D00E3067D /* Main.storyboard */,
