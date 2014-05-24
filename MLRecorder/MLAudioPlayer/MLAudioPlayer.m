@@ -43,6 +43,11 @@ return; \
     self = [super init];
     if (self) {
         self.isPlayDone = YES;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(sensorStateChange:)
+                                                     name:@"UIDeviceProximityStateDidChangeNotification"
+                                                   object:nil];
     }
     return self;
 }
@@ -54,6 +59,10 @@ return; \
 //    if (self.isPlaying){
 //        [self stopPlaying];
 //    }
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    
     NSLog(@"MLAudioPlayer dealloc");
 }
 
@@ -187,6 +196,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
     [self setUpNewPlay];
     
     self.isPlayDone = NO;
+    [self startProximityMonitering];
     
     //输出的buffer必须先填满一次才能准备下一次buffer
     for (int i = 0; i < kNumberAudioQueueBuffers; ++i) {
@@ -203,6 +213,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
         return;
     }
     
+    [self stopProximityMonitering];
     self.isPlayDone = YES; //和isPlaying的区别是这个是给里面看的，那个是给外面看的
     self.isPlaying = NO;
     
@@ -224,6 +235,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 
 - (void)postAErrorWithErrorCode:(MLAudioPlayerErrorCode)code andDescription:(NSString*)description
 {
+    [self stopProximityMonitering];
     self.isPlayDone = YES;
     self.isPlaying = NO;
     
@@ -241,5 +253,27 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
     }
 }
 
+#pragma mark - proximity monitor
 
+- (void)startProximityMonitering {
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
+    [self sensorStateChange:nil];
+    NSLog(@"开启距离监听");
+}
+
+- (void)stopProximityMonitering {
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
+    NSLog(@"关闭距离监听");
+}
+
+- (void)sensorStateChange:(NSNotification *)notification {
+    //如果此时手机靠近面部放在耳朵旁，那么声音将通过听筒输出，并将屏幕变暗
+    if ([[UIDevice currentDevice] proximityState] == YES) {
+        NSLog(@"Device is close to user");
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    }else {
+        NSLog(@"Device is not close to user");
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    }
+}
 @end

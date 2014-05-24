@@ -524,6 +524,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLRecorder/MLRecorder-Prefix.pch";
 				INFOPLIST_FILE = "MLRecorder/MLRecorder-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MLRecorder/MLAudioRecorder/amr_en_de/lib",
@@ -543,6 +544,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLRecorder/MLRecorder-Prefix.pch";
 				INFOPLIST_FILE = "MLRecorder/MLRecorder-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MLRecorder/MLAudioRecorder/amr_en_de/lib",
