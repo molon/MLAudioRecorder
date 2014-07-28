@@ -27,7 +27,7 @@
 @property (nonatomic, strong) MLAudioPlayer *player;
 @property (nonatomic, strong) AmrPlayerReader *amrReader;
 
-//@property (nonatomic, strong) AVAudioPlayer *player;
+@property (nonatomic, strong) AVAudioPlayer *avAudioPlayer;
 
 @property (nonatomic, copy) NSString *filePath;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
@@ -60,7 +60,6 @@
     amrWriter.filePath = [path stringByAppendingPathComponent:@"record.amr"];
     amrWriter.maxSecondCount = 60;
     amrWriter.maxFileSize = 1024*256;
-    amrWriter.cafFilePath = [path stringByAppendingPathComponent:@"recordAmr.caf"];
     self.amrWriter = amrWriter;
     
     Mp3RecordWriter *mp3Writer = [[Mp3RecordWriter alloc]init];
@@ -71,7 +70,7 @@
     
     MLAudioMeterObserver *meterObserver = [[MLAudioMeterObserver alloc]init];
     meterObserver.actionBlock = ^(NSArray *levelMeterStates,MLAudioMeterObserver *meterObserver){
-//        NSLog(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
+        //        NSLog(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
     };
     meterObserver.errorBlock = ^(NSError *error,MLAudioMeterObserver *meterObserver){
         [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
@@ -87,7 +86,7 @@
     recorder.receiveErrorBlock = ^(NSError *error){
         [weakSelf.recordButton setTitle:@"Record" forState:UIControlStateNormal];
         weakSelf.meterObserver.audioQueue = nil;
-
+        
         [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
     };
     
@@ -95,15 +94,13 @@
     //caf
     //    recorder.fileWriterDelegate = writer;
     //    self.filePath = writer.filePath;
-    
-    //amr
-    recorder.bufferDurationSeconds = 0.5;
-    recorder.fileWriterDelegate = amrWriter;
-    self.filePath  = amrWriter.cafFilePath; //因为能直接播放是的caf文件，所以给予caf文件地址
-    
     //mp3
     //    recorder.fileWriterDelegate = mp3Writer;
     //    self.filePath = mp3Writer.filePath;
+    
+    //amr
+    recorder.bufferDurationSeconds = 0.5;
+    recorder.fileWriterDelegate = self.amrWriter;
     
     self.recorder = recorder;
     
@@ -124,21 +121,23 @@
     };
     self.player = player;
     self.amrReader = amrReader;
-
+    
     
     
     
     
     //button event test
-//    [self.recordButton addTarget:self action:@selector(dragInside) forControlEvents:UIControlEventTouchDragInside];
-//    [self.recordButton addTarget:self action:@selector(dragOutside) forControlEvents:UIControlEventTouchDragOutside];
-//    [self.recordButton addTarget:self action:@selector(dragEnter) forControlEvents:UIControlEventTouchDragEnter];
-//    [self.recordButton addTarget:self action:@selector(dragExit) forControlEvents:UIControlEventTouchDragExit];
-//    [self.recordButton addTarget:self action:@selector(upOutSide) forControlEvents:UIControlEventTouchUpOutside];
-//    [self.recordButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchCancel];
+    //    [self.recordButton addTarget:self action:@selector(dragInside) forControlEvents:UIControlEventTouchDragInside];
+    //    [self.recordButton addTarget:self action:@selector(dragOutside) forControlEvents:UIControlEventTouchDragOutside];
+    //    [self.recordButton addTarget:self action:@selector(dragEnter) forControlEvents:UIControlEventTouchDragEnter];
+    //    [self.recordButton addTarget:self action:@selector(dragExit) forControlEvents:UIControlEventTouchDragExit];
+    //    [self.recordButton addTarget:self action:@selector(upOutSide) forControlEvents:UIControlEventTouchUpOutside];
+    //    [self.recordButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchCancel];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioSessionDidChangeInterruptionType:)
                                                  name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
+    
+    
 }
 
 - (void)audioSessionDidChangeInterruptionType:(NSNotification *)notification
@@ -176,10 +175,10 @@
 }
 
 - (IBAction)play:(id)sender {
-//     NSString *filePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"test2.amr"];
+    //    self.avAudioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
+    //    [self.avAudioPlayer play];
     
-//    self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
-//    [self.player play];
+    
     self.amrReader.filePath = self.amrWriter.filePath;
     
     UIButton *playButton = (UIButton*)sender;
