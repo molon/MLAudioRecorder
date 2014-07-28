@@ -176,7 +176,7 @@
 }
 
 - (IBAction)play:(id)sender {
-     NSString *filePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"test2.amr"];
+//     NSString *filePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"test2.amr"];
     
 //    self.player = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
 //    [self.player play];
