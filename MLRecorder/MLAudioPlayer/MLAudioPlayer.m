@@ -46,7 +46,7 @@ return; \
         
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(sensorStateChange:)
-                                                     name:@"UIDeviceProximityStateDidChangeNotification"
+                                                     name:UIDeviceProximityStateDidChangeNotification
                                                    object:nil];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -65,12 +65,12 @@ return; \
 {
     NSAssert(!self.isPlaying, @"MLAudioPlayer dealloc之前必须停止播放");
     
-//    if (self.isPlaying){
-//        [self stopPlaying];
-//    }
+    //    if (self.isPlaying){
+    //        [self stopPlaying];
+    //    }
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
+    
     
     NSLog(@"MLAudioPlayer dealloc");
 }
@@ -283,25 +283,30 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 
 - (void)sensorStateChange:(NSNotification *)notification {
     if ([self isNotUseBuiltInPort]) {
+        //        NSLog(@"有耳机");
         return;//带上耳机不需要这个
     }
     //如果此时手机靠近面部放在耳朵旁，那么声音将通过听筒输出，并将屏幕变暗
-    if ([[UIDevice currentDevice] proximityState] == YES) {
-        [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
-    }else {
-        [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+    if ([UIDevice currentDevice].isProximityMonitoringEnabled) {
+        if ([[UIDevice currentDevice] proximityState] == YES) {
+            //        NSLog(@"听筒");
+            [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
+        }else {
+            //        NSLog(@"扬声器");
+            [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+        }
     }
 }
 
 - (void)sessionRouteChange:(NSNotification *)notification {
-
+    
     if ([notification.userInfo[AVAudioSessionRouteChangeReasonKey] unsignedIntegerValue] == AVAudioSessionRouteChangeReasonNewDeviceAvailable) {
-//        NSLog(@"新设备插入");
+        //        NSLog(@"新设备插入");
         if ([self isNotUseBuiltInPort]) {
             [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
         }
     }else if ([notification.userInfo[AVAudioSessionRouteChangeReasonKey] integerValue] == AVAudioSessionRouteChangeReasonOldDeviceUnavailable) {
-//        NSLog(@"新设备拔出");
+        //        NSLog(@"新设备拔出");
         if (![self isNotUseBuiltInPort]) {
             [self sensorStateChange:nil];
         }
@@ -310,7 +315,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 
 - (void)sessionInterruption:(NSNotification *)notification {
     AVAudioSessionInterruptionType interruptionType = [[[notification userInfo]
-                                                       objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+                                                        objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
     if (AVAudioSessionInterruptionTypeBegan == interruptionType)
     {
         NSLog(@"begin interruption");

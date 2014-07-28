@@ -14,4 +14,7 @@
 
 @property (nonatomic, copy) NSString *filePath;
 
++ (double)durationOfAmrFilePath:(NSString*)filePath;
+- (double)duration;
+
 @end

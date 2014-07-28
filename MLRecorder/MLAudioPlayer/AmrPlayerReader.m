@@ -69,6 +69,8 @@ BOOL ReadAMRFrameFirst(FILE* fpamr, int* stdFrameSize, unsigned char* stdFrameHe
 {
     unsigned long curpos = ftell(fpamr); //记录当前位置，这一帧只是读取一下，并不做处理
     
+    fseek(fpamr, strlen(AMR_MAGIC_NUMBER), SEEK_SET);
+    
     //先读帧头
 	fread(stdFrameHeader, 1, sizeof(unsigned char), fpamr);
 	if (feof(fpamr)) return NO;
@@ -79,6 +81,43 @@ BOOL ReadAMRFrameFirst(FILE* fpamr, int* stdFrameSize, unsigned char* stdFrameHe
 	*stdFrameSize = caclAMRFrameSize(*stdFrameHeader);
 	
 	return YES;
+}
+
+long filesize(FILE *stream)
+{
+    long curpos,length;
+    curpos=ftell(stream);
+    fseek(stream,0L,SEEK_END);
+    length=ftell(stream);
+    fseek(stream,curpos,SEEK_SET);
+    return length;
+}
+
++ (double)durationOfAmrFilePath:(NSString*)filePath
+{
+    FILE *file = fopen((const char *)[filePath UTF8String], "rb");
+    if (file==0) {
+        NSLog(@"打开文件失败:%s",__FUNCTION__);
+        return 0;
+    }
+    unsigned char stdFrameHeader;
+    int stdFrameSize;
+    if(!ReadAMRFrameFirst(file, &stdFrameSize, &stdFrameHeader)){
+        return 0;
+    }
+    
+    //检测此文件一共有多少帧
+    long fileSize = filesize(file);
+    if(file){
+        fclose(file);
+    }
+    
+    return ((fileSize - strlen(AMR_MAGIC_NUMBER))/(double)stdFrameSize)/(double)AMR_FRAME_COUNT_PER_SECOND;
+}
+
+- (double)duration
+{
+    return [[self class]durationOfAmrFilePath:self.filePath];
 }
 
 - (BOOL)openFileWithPlayer:(MLAudioPlayer*)player
@@ -112,7 +151,7 @@ BOOL ReadAMRFrameFirst(FILE* fpamr, int* stdFrameSize, unsigned char* stdFrameHe
     if(!ReadAMRFrameFirst(_file, &_stdFrameSize, &_stdFrameHeader)){
         return NO;
     }
-	NSLog(@"帧大小%d,帧头%c",_stdFrameSize,_stdFrameHeader);
+//	NSLog(@"帧大小%d,帧头%c",_stdFrameSize,_stdFrameHeader);
     
     return YES;
 }

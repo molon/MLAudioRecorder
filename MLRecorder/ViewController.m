@@ -181,6 +181,8 @@
     
     self.amrReader.filePath = self.amrWriter.filePath;
     
+    NSLog(@"文件时长%f",[AmrPlayerReader durationOfAmrFilePath:self.amrReader.filePath]);
+    
     UIButton *playButton = (UIButton*)sender;
     
     if (self.player.isPlaying) {
