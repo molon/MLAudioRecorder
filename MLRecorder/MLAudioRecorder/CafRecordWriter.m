@@ -51,7 +51,7 @@
     
     
     //    NSData *data = [[NSData alloc]initWithContentsOfFile:self.filePath];
-    //    NSLog(@"文件长度%ld",data.length);
+    //    DLOG(@"文件长度%ld",data.length);
     
     return YES;
 }

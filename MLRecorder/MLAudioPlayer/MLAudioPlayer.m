@@ -72,7 +72,7 @@ return; \
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     
-    NSLog(@"MLAudioPlayer dealloc");
+    DLOG(@"MLAudioPlayer dealloc");
 }
 
 #pragma mark - read data callback
@@ -186,7 +186,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 	bufferByteSize = bufferByteSize>maxBufferSize?maxBufferSize:bufferByteSize;
     bufferByteSize = bufferByteSize<minBufferSize?minBufferSize:bufferByteSize;
     self.bufferByteSize = bufferByteSize;
-    NSLog(@"缓冲区大小:%d",bufferByteSize);
+    DLOG(@"缓冲区大小:%d",bufferByteSize);
     
     //创建缓冲器
     for (int i = 0; i < kNumberAudioQueueBuffers; ++i){
@@ -247,7 +247,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
     
     [self.fileReaderDelegate completeReadWithPlayer:self withIsError:YES];
-    NSLog(@"播放发生错误");
+    DLOG(@"播放发生错误");
     
     NSError *error = [NSError errorWithDomain:kMLAudioPlayerErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
     
@@ -273,27 +273,27 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
     [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
 //    [self sensorStateChange:nil];
     [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
-    NSLog(@"开启距离监听");
+    DLOG(@"开启距离监听");
 }
 
 - (void)stopProximityMonitering {
     [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
     [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
-    NSLog(@"关闭距离监听");
+    DLOG(@"关闭距离监听");
 }
 
 - (void)sensorStateChange:(NSNotification *)notification {
     if ([self isNotUseBuiltInPort]) {
-        //        NSLog(@"有耳机");
+        //        DLOG(@"有耳机");
         return;//带上耳机不需要这个
     }
     //如果此时手机靠近面部放在耳朵旁，那么声音将通过听筒输出，并将屏幕变暗
     if ([UIDevice currentDevice].isProximityMonitoringEnabled) {
         if ([[UIDevice currentDevice] proximityState] == YES) {
-            //        NSLog(@"听筒");
+            //        DLOG(@"听筒");
             [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
         }else {
-            //        NSLog(@"扬声器");
+            //        DLOG(@"扬声器");
             [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
         }
     }
@@ -302,12 +302,12 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 - (void)sessionRouteChange:(NSNotification *)notification {
     
     if ([notification.userInfo[AVAudioSessionRouteChangeReasonKey] unsignedIntegerValue] == AVAudioSessionRouteChangeReasonNewDeviceAvailable) {
-        //        NSLog(@"新设备插入");
+        //        DLOG(@"新设备插入");
         if ([self isNotUseBuiltInPort]) {
             [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
         }
     }else if ([notification.userInfo[AVAudioSessionRouteChangeReasonKey] integerValue] == AVAudioSessionRouteChangeReasonOldDeviceUnavailable) {
-        //        NSLog(@"新设备拔出");
+        //        DLOG(@"新设备拔出");
         if (![self isNotUseBuiltInPort]) {
             [self sensorStateChange:nil];
         }
@@ -319,13 +319,13 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
                                                         objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
     if (AVAudioSessionInterruptionTypeBegan == interruptionType)
     {
-        NSLog(@"begin interruption");
+        DLOG(@"begin interruption");
         //直接停止播放
         [self stopPlaying];
     }
     else if (AVAudioSessionInterruptionTypeEnded == interruptionType)
     {
-        NSLog(@"end interruption");
+        DLOG(@"end interruption");
     }
 }
 

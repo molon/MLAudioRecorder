@@ -70,7 +70,7 @@
     
     MLAudioMeterObserver *meterObserver = [[MLAudioMeterObserver alloc]init];
     meterObserver.actionBlock = ^(NSArray *levelMeterStates,MLAudioMeterObserver *meterObserver){
-                NSLog(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
+                DLOG(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
     };
     meterObserver.errorBlock = ^(NSError *error,MLAudioMeterObserver *meterObserver){
         [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
@@ -146,11 +146,11 @@
                                                         objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
     if (AVAudioSessionInterruptionTypeBegan == interruptionType)
     {
-        NSLog(@"begin");
+        DLOG(@"begin");
     }
     else if (AVAudioSessionInterruptionTypeEnded == interruptionType)
     {
-        NSLog(@"end");
+        DLOG(@"end");
     }
 }
 
@@ -182,7 +182,7 @@
     
     self.amrReader.filePath = self.amrWriter.filePath;
     
-    NSLog(@"文件时长%f",[AmrPlayerReader durationOfAmrFilePath:self.amrReader.filePath]);
+    DLOG(@"文件时长%f",[AmrPlayerReader durationOfAmrFilePath:self.amrReader.filePath]);
     
     UIButton *playButton = (UIButton*)sender;
     
@@ -197,29 +197,29 @@
 
 - (void)dragEnter
 {
-    NSLog(@"T普通提示录音状态");
+    DLOG(@"T普通提示录音状态");
 }
 - (void)dragExit
 {
-    NSLog(@"T提示松开可取消");
+    DLOG(@"T提示松开可取消");
 }
 - (void)upOutSide
 {
-    NSLog(@"T取消录音");
+    DLOG(@"T取消录音");
 }
 - (void)cancel
 {
-    NSLog(@"T取消录音");
+    DLOG(@"T取消录音");
 }
 
 - (void)down
 {
-    NSLog(@"T开始录音");
+    DLOG(@"T开始录音");
     [self dragEnter];
 }
 
 - (void)upInside
 {
-    NSLog(@"T结束录音");
+    DLOG(@"T结束录音");
 }
 @end

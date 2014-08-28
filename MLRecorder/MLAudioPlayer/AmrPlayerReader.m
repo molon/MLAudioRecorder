@@ -101,7 +101,7 @@ long filesize(FILE *stream)
     }
     FILE *file = fopen((const char *)[filePath UTF8String], "rb");
     if (file==0) {
-        NSLog(@"打开文件失败:%s",__FUNCTION__);
+        DLOG(@"打开文件失败:%s",__FUNCTION__);
         return 0;
     }
     unsigned char stdFrameHeader;
@@ -141,7 +141,7 @@ long filesize(FILE *stream)
     }
     _file = fopen((const char *)[filePath UTF8String], "rb");
     if (_file==0) {
-        NSLog(@"打开文件失败:%s",__FUNCTION__);
+        DLOG(@"打开文件失败:%s",__FUNCTION__);
         return NO;
     }
 
@@ -159,7 +159,7 @@ long filesize(FILE *stream)
     if(!ReadAMRFrameFirst(_file, &_stdFrameSize, &_stdFrameHeader)){
         return NO;
     }
-//	NSLog(@"帧大小%d,帧头%c",_stdFrameSize,_stdFrameHeader);
+//	DLOG(@"帧大小%d,帧头%c",_stdFrameSize,_stdFrameHeader);
     
     return YES;
 }

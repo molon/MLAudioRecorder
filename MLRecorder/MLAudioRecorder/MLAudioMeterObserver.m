@@ -50,7 +50,7 @@ return; \
     
     free(_levelMeterStates);
     
-	NSLog(@"MLAudioMeterObserver dealloc");
+	DLOG(@"MLAudioMeterObserver dealloc");
 }
 
 #pragma mark - setter and getter
@@ -99,7 +99,7 @@ return; \
     IfAudioQueueErrorPostAndReturn(AudioQueueSetProperty(audioQueue, kAudioQueueProperty_EnableLevelMetering, &val, sizeof(UInt32)), @"couldn't enable metering");
     
     if (!val){
-        NSLog(@"不支持光谱图"); //需要发送错误
+        DLOG(@"不支持光谱图"); //需要发送错误
         return;
     }
     
@@ -149,7 +149,7 @@ return; \
 {
     self.audioQueue = nil;
     
-    NSLog(@"监控音频队列光谱发生错误");
+    DLOG(@"监控音频队列光谱发生错误");
     
     NSError *error = [NSError errorWithDomain:kMLAudioMeterObserverErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
     

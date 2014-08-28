@@ -37,7 +37,7 @@
     //建立amr文件
     _file = fopen((const char *)[self.filePath UTF8String], "wb+");
     if (_file==0) {
-        NSLog(@"建立文件失败:%s",__FUNCTION__);
+        DLOG(@"建立文件失败:%s",__FUNCTION__);
         return NO;
     }
     
@@ -59,7 +59,7 @@
 {
     if (self.maxSecondCount>0){
         if (self.recordedSecondCount+recoder.bufferDurationSeconds>self.maxSecondCount){
-            //            NSLog(@"录音超时");
+            //            DLOG(@"录音超时");
             dispatch_async(dispatch_get_main_queue(), ^{
                 [recoder stopRecording];
             });
@@ -77,7 +77,7 @@
     }
     if (pcmLen%2!=0){
         pcmLen--; //防止意外，如果不是偶数，情愿减去最后一个字节。
-        NSLog(@"不是偶数");
+        DLOG(@"不是偶数");
     }
     
     unsigned char buffer[320];
@@ -93,7 +93,7 @@
         if (recvLen>0) {
             if (self.maxFileSize>0){
                 if(self.recordedFileSize+recvLen>self.maxFileSize){
-                    //                    NSLog(@"录音文件过大");
+                    //                    DLOG(@"录音文件过大");
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [recoder stopRecording];
                     });

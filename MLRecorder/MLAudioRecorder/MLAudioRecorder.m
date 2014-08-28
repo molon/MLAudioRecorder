@@ -74,7 +74,7 @@ return; \
     //    }
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    NSLog(@"MLAudioRecorder dealloc");
+    DLOG(@"MLAudioRecorder dealloc");
 }
 
 
@@ -171,7 +171,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     //计算估算的缓存区大小
     int frames = (int)ceil(self.bufferDurationSeconds * _recordFormat.mSampleRate);
     int bufferByteSize = frames * _recordFormat.mBytesPerFrame;
-    NSLog(@"缓冲区大小:%d",bufferByteSize);
+    DLOG(@"缓冲区大小:%d",bufferByteSize);
     
     //创建缓冲器
     for (int i = 0; i < kNumberAudioQueueBuffers; ++i){
@@ -187,7 +187,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
 
 - (void)stopRecording
 {
-    //    NSLog(@"stopRecording");
+    //    DLOG(@"stopRecording");
     if (self.isRecording) {
         self.isRecording = NO;
         
@@ -208,7 +208,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         });
         if(!isContinue) return;
         
-        NSLog(@"录音结束");
+        DLOG(@"录音结束");
         
         if(self.delegate&&[self.delegate respondsToSelector:@selector(recordStopped)]){
             [self.delegate recordStopped];
@@ -234,7 +234,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
     //设置通道数,这里先使用系统的测试下 //TODO:
     _recordFormat.mChannelsPerFrame = 1;//(UInt32)[[AVAudioSession sharedInstance] inputNumberOfChannels];
     
-    //    NSLog(@"sampleRate:%f,通道数:%d",_recordFormat.mSampleRate,_recordFormat.mChannelsPerFrame);
+    //    DLOG(@"sampleRate:%f,通道数:%d",_recordFormat.mSampleRate,_recordFormat.mChannelsPerFrame);
     
     //设置format，怎么称呼不知道。
 	_recordFormat.mFormatID = inFormatID;
@@ -267,7 +267,7 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
         });
     }
     
-    NSLog(@"录音发生错误");
+    DLOG(@"录音发生错误");
     
     NSError *error = [NSError errorWithDomain:kMLAudioRecorderErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
     
@@ -286,13 +286,13 @@ void inputBufferHandler(void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRe
                                                         objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
     if (AVAudioSessionInterruptionTypeBegan == interruptionType)
     {
-        NSLog(@"begin interruption");
+        DLOG(@"begin interruption");
         //直接停止录音
         [self stopRecording];
     }
     else if (AVAudioSessionInterruptionTypeEnded == interruptionType)
     {
-        NSLog(@"end interruption");
+        DLOG(@"end interruption");
     }
 }
 @end

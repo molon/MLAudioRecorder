@@ -38,14 +38,14 @@
     //建立mp3文件
     _file = fopen((const char *)[self.filePath UTF8String], "wb+");
     if (_file==0) {
-        NSLog(@"建立文件失败:%s",__FUNCTION__);
+        DLOG(@"建立文件失败:%s",__FUNCTION__);
         return NO;
     }
     
     self.recordedFileSize = 0;
     self.recordedSecondCount = 0;
     
-    NSLog(@"filePath:%@",self.filePath);
+    DLOG(@"filePath:%@",self.filePath);
     
     return YES;
     
@@ -55,7 +55,7 @@
 {
     if (self.maxSecondCount>0){
         if (self.recordedSecondCount+recoder.bufferDurationSeconds>self.maxSecondCount){
-            //            NSLog(@"录音超时");
+            //            DLOG(@"录音超时");
             dispatch_async(dispatch_get_main_queue(), ^{
                 [recoder stopRecording];
             });
@@ -81,7 +81,7 @@
     if (recvLen>0) {
         if (self.maxFileSize>0){
             if(self.recordedFileSize+recvLen>self.maxFileSize){
-                //                    NSLog(@"录音文件过大");
+                //                    DLOG(@"录音文件过大");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [recoder stopRecording];
                 });
