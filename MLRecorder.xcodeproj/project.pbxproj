@@ -38,7 +38,6 @@
 		365F955A19AED3A5001BB9A0 /* SenderVoiceNodePlaying001@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 365F955219AED3A5001BB9A0 /* SenderVoiceNodePlaying001@2x.png */; };
 		365F955B19AED3A5001BB9A0 /* SenderVoiceNodePlaying002@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 365F955319AED3A5001BB9A0 /* SenderVoiceNodePlaying002@2x.png */; };
 		365F955C19AED3A5001BB9A0 /* SenderVoiceNodePlaying003@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 365F955419AED3A5001BB9A0 /* SenderVoiceNodePlaying003@2x.png */; };
-		365F955F19AEE1BF001BB9A0 /* NSURL+String.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F955E19AEE1BF001BB9A0 /* NSURL+String.m */; };
 		368DCC29192FC436001F3574 /* test2.amr in Resources */ = {isa = PBXBuildFile; fileRef = 368DCC28192FC3EF001F3574 /* test2.amr */; };
 		369D589419AECA64004AB79C /* AmrPlayerReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D589119AECA64004AB79C /* AmrPlayerReader.m */; };
 		369D589519AECA64004AB79C /* MLAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D589319AECA64004AB79C /* MLAudioPlayer.m */; };
@@ -134,8 +133,6 @@
 		365F955219AED3A5001BB9A0 /* SenderVoiceNodePlaying001@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SenderVoiceNodePlaying001@2x.png"; sourceTree = "<group>"; };
 		365F955319AED3A5001BB9A0 /* SenderVoiceNodePlaying002@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SenderVoiceNodePlaying002@2x.png"; sourceTree = "<group>"; };
 		365F955419AED3A5001BB9A0 /* SenderVoiceNodePlaying003@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SenderVoiceNodePlaying003@2x.png"; sourceTree = "<group>"; };
-		365F955D19AEE1BF001BB9A0 /* NSURL+String.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+String.h"; sourceTree = "<group>"; };
-		365F955E19AEE1BF001BB9A0 /* NSURL+String.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+String.m"; sourceTree = "<group>"; };
 		368DCC28192FC3EF001F3574 /* test2.amr */ = {isa = PBXFileReference; lastKnownFileType = file; path = test2.amr; sourceTree = "<group>"; };
 		369D589019AECA64004AB79C /* AmrPlayerReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmrPlayerReader.h; sourceTree = "<group>"; };
 		369D589119AECA64004AB79C /* AmrPlayerReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmrPlayerReader.m; sourceTree = "<group>"; };
@@ -478,8 +475,6 @@
 			isa = PBXGroup;
 			children = (
 				365F953B19AED238001BB9A0 /* Debug.h */,
-				365F955D19AEE1BF001BB9A0 /* NSURL+String.h */,
-				365F955E19AEE1BF001BB9A0 /* NSURL+String.m */,
 				365F94EF19AECE7F001BB9A0 /* AFNetwoking */,
 				365F951B19AECE7F001BB9A0 /* MLPlayVoiceButton */,
 				369D589619AECA95004AB79C /* MLAudioRecorder */,
@@ -645,7 +640,6 @@
 				369D589519AECA64004AB79C /* MLAudioPlayer.m in Sources */,
 				369D58B619AECA95004AB79C /* Mp3RecordWriter.m in Sources */,
 				365F952719AECE7F001BB9A0 /* AFHTTPRequestOperationManager.m in Sources */,
-				365F955F19AEE1BF001BB9A0 /* NSURL+String.m in Sources */,
 				365F952A19AECE7F001BB9A0 /* AFURLSessionManager.m in Sources */,
 				365F953319AECE7F001BB9A0 /* UIImageView+AFNetworking.m in Sources */,
 				365F953419AECE7F001BB9A0 /* UIProgressView+AFNetworking.m in Sources */,
