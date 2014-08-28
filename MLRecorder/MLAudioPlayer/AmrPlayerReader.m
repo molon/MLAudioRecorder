@@ -95,6 +95,10 @@ long filesize(FILE *stream)
 
 + (double)durationOfAmrFilePath:(NSString*)filePath
 {
+    //建立amr文件
+    if ([filePath hasPrefix:@"file://"]) {
+        filePath = [filePath substringFromIndex:7];
+    }
     FILE *file = fopen((const char *)[filePath UTF8String], "rb");
     if (file==0) {
         NSLog(@"打开文件失败:%s",__FUNCTION__);
@@ -131,7 +135,11 @@ long filesize(FILE *stream)
     }
     
     //建立amr文件
-    _file = fopen((const char *)[self.filePath UTF8String], "rb");
+    NSString *filePath = self.filePath;
+    if ([filePath hasPrefix:@"file://"]) {
+        filePath = [filePath substringFromIndex:7];
+    }
+    _file = fopen((const char *)[filePath UTF8String], "rb");
     if (_file==0) {
         NSLog(@"打开文件失败:%s",__FUNCTION__);
         return NO;

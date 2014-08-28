@@ -85,8 +85,8 @@ void isRunningProc (void * inUserData,AudioQueueRef inAQ,AudioQueuePropertyID in
 	UInt32 size = sizeof(isRunning);
 	OSStatus result = AudioQueueGetProperty (inAQ, kAudioQueueProperty_IsRunning, &isRunning, &size);
 	
-	if ((result == noErr) && (!isRunning)){
-        [player performSelector:@selector(stopPlaying) withObject:nil afterDelay:0.01f];
+	if ((result == noErr) && (!isRunning)&&player.isPlaying){
+        [player performSelector:@selector(stopPlaying) withObject:nil afterDelay:0.001f];
     }
 }
 
@@ -234,8 +234,8 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
     }
 }
 
-#pragma mark - error
 
+#pragma mark - error
 - (void)postAErrorWithErrorCode:(MLAudioPlayerErrorCode)code andDescription:(NSString*)description
 {
     [self stopProximityMonitering];
@@ -271,7 +271,8 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 
 - (void)startProximityMonitering {
     [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
-    [self sensorStateChange:nil];
+//    [self sensorStateChange:nil];
+    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
     NSLog(@"开启距离监听");
 }
 

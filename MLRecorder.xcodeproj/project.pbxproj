@@ -8,14 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		36197FFC192F2E9C00C9198F /* test.amr in Resources */ = {isa = PBXBuildFile; fileRef = 36C3B7E1192C798F00B6063D /* test.amr */; };
-		36258DF1192DFA5E0051388E /* MLAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 36258DF0192DFA5E0051388E /* MLAudioPlayer.m */; };
-		36258DF4192F0A0F0051388E /* AmrPlayerReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 36258DF3192F0A0F0051388E /* AmrPlayerReader.m */; };
 		368DCC29192FC436001F3574 /* test2.amr in Resources */ = {isa = PBXBuildFile; fileRef = 368DCC28192FC3EF001F3574 /* test2.amr */; };
-		369BEF6A1922094A00CAF381 /* MLAudioMeterObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 369BEF691922094A00CAF381 /* MLAudioMeterObserver.m */; };
-		36D909E01921D2B1000D6825 /* libopencore-amrnb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 36D909DE1921D2B1000D6825 /* libopencore-amrnb.a */; };
-		36D909E11921D2B1000D6825 /* libopencore-amrwb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 36D909DF1921D2B1000D6825 /* libopencore-amrwb.a */; };
-		36D909E41921D2C2000D6825 /* Mp3RecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D909E31921D2C2000D6825 /* Mp3RecordWriter.m */; };
-		36D90A2F1921DBC9000D6825 /* libmp3lame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 36D90A2E1921DBC9000D6825 /* libmp3lame.a */; };
+		369D589419AECA64004AB79C /* AmrPlayerReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D589119AECA64004AB79C /* AmrPlayerReader.m */; };
+		369D589519AECA64004AB79C /* MLAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D589319AECA64004AB79C /* MLAudioPlayer.m */; };
+		369D58AF19AECA95004AB79C /* libopencore-amrnb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 369D58A019AECA95004AB79C /* libopencore-amrnb.a */; };
+		369D58B019AECA95004AB79C /* libopencore-amrwb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 369D58A119AECA95004AB79C /* libopencore-amrwb.a */; };
+		369D58B119AECA95004AB79C /* AmrRecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A319AECA95004AB79C /* AmrRecordWriter.m */; };
+		369D58B219AECA95004AB79C /* CafRecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A519AECA95004AB79C /* CafRecordWriter.m */; };
+		369D58B319AECA95004AB79C /* MLAudioMeterObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A719AECA95004AB79C /* MLAudioMeterObserver.m */; };
+		369D58B419AECA95004AB79C /* MLAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A919AECA95004AB79C /* MLAudioRecorder.m */; };
+		369D58B519AECA95004AB79C /* libmp3lame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 369D58AC19AECA95004AB79C /* libmp3lame.a */; };
+		369D58B619AECA95004AB79C /* Mp3RecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58AE19AECA95004AB79C /* Mp3RecordWriter.m */; };
 		36DE7E771921060C00E3067D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E761921060C00E3067D /* Foundation.framework */; };
 		36DE7E791921060C00E3067D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E781921060C00E3067D /* CoreGraphics.framework */; };
 		36DE7E7B1921060C00E3067D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E7A1921060C00E3067D /* UIKit.framework */; };
@@ -30,9 +33,6 @@
 		36DE7E981921060D00E3067D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E7A1921060C00E3067D /* UIKit.framework */; };
 		36DE7EA01921060D00E3067D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 36DE7E9E1921060D00E3067D /* InfoPlist.strings */; };
 		36DE7EA21921060D00E3067D /* MLRecorderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DE7EA11921060D00E3067D /* MLRecorderTests.m */; };
-		36DE7EBF192106C300E3067D /* AmrRecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DE7EBA192106C300E3067D /* AmrRecordWriter.m */; };
-		36DE7EC0192106C300E3067D /* CafRecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DE7EBC192106C300E3067D /* CafRecordWriter.m */; };
-		36DE7EC1192106C300E3067D /* MLAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DE7EBE192106C300E3067D /* MLAudioRecorder.m */; };
 		36DE7EC3192106CD00E3067D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7EC2192106CD00E3067D /* AudioToolbox.framework */; };
 		36DE7EC5192106D100E3067D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7EC4192106D100E3067D /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
@@ -48,24 +48,30 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		36258DEF192DFA5E0051388E /* MLAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioPlayer.h; sourceTree = "<group>"; };
-		36258DF0192DFA5E0051388E /* MLAudioPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioPlayer.m; sourceTree = "<group>"; };
-		36258DF2192F0A0F0051388E /* AmrPlayerReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmrPlayerReader.h; sourceTree = "<group>"; };
-		36258DF3192F0A0F0051388E /* AmrPlayerReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmrPlayerReader.m; sourceTree = "<group>"; };
 		368DCC28192FC3EF001F3574 /* test2.amr */ = {isa = PBXFileReference; lastKnownFileType = file; path = test2.amr; sourceTree = "<group>"; };
-		369BEF681922094A00CAF381 /* MLAudioMeterObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioMeterObserver.h; sourceTree = "<group>"; };
-		369BEF691922094A00CAF381 /* MLAudioMeterObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioMeterObserver.m; sourceTree = "<group>"; };
+		369D589019AECA64004AB79C /* AmrPlayerReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmrPlayerReader.h; sourceTree = "<group>"; };
+		369D589119AECA64004AB79C /* AmrPlayerReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmrPlayerReader.m; sourceTree = "<group>"; };
+		369D589219AECA64004AB79C /* MLAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioPlayer.h; sourceTree = "<group>"; };
+		369D589319AECA64004AB79C /* MLAudioPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioPlayer.m; sourceTree = "<group>"; };
+		369D589A19AECA95004AB79C /* interf_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_dec.h; sourceTree = "<group>"; };
+		369D589B19AECA95004AB79C /* interf_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_enc.h; sourceTree = "<group>"; };
+		369D589D19AECA95004AB79C /* dec_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dec_if.h; sourceTree = "<group>"; };
+		369D589E19AECA95004AB79C /* if_rom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = if_rom.h; sourceTree = "<group>"; };
+		369D58A019AECA95004AB79C /* libopencore-amrnb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrnb.a"; sourceTree = "<group>"; };
+		369D58A119AECA95004AB79C /* libopencore-amrwb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrwb.a"; sourceTree = "<group>"; };
+		369D58A219AECA95004AB79C /* AmrRecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmrRecordWriter.h; sourceTree = "<group>"; };
+		369D58A319AECA95004AB79C /* AmrRecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmrRecordWriter.m; sourceTree = "<group>"; };
+		369D58A419AECA95004AB79C /* CafRecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CafRecordWriter.h; sourceTree = "<group>"; };
+		369D58A519AECA95004AB79C /* CafRecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CafRecordWriter.m; sourceTree = "<group>"; };
+		369D58A619AECA95004AB79C /* MLAudioMeterObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioMeterObserver.h; sourceTree = "<group>"; };
+		369D58A719AECA95004AB79C /* MLAudioMeterObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioMeterObserver.m; sourceTree = "<group>"; };
+		369D58A819AECA95004AB79C /* MLAudioRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioRecorder.h; sourceTree = "<group>"; };
+		369D58A919AECA95004AB79C /* MLAudioRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioRecorder.m; sourceTree = "<group>"; };
+		369D58AB19AECA95004AB79C /* lame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lame.h; sourceTree = "<group>"; };
+		369D58AC19AECA95004AB79C /* libmp3lame.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmp3lame.a; sourceTree = "<group>"; };
+		369D58AD19AECA95004AB79C /* Mp3RecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mp3RecordWriter.h; sourceTree = "<group>"; };
+		369D58AE19AECA95004AB79C /* Mp3RecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mp3RecordWriter.m; sourceTree = "<group>"; };
 		36C3B7E1192C798F00B6063D /* test.amr */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.amr; sourceTree = "<group>"; };
-		36D909D81921D2B1000D6825 /* interf_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_dec.h; sourceTree = "<group>"; };
-		36D909D91921D2B1000D6825 /* interf_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_enc.h; sourceTree = "<group>"; };
-		36D909DB1921D2B1000D6825 /* dec_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dec_if.h; sourceTree = "<group>"; };
-		36D909DC1921D2B1000D6825 /* if_rom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = if_rom.h; sourceTree = "<group>"; };
-		36D909DE1921D2B1000D6825 /* libopencore-amrnb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrnb.a"; sourceTree = "<group>"; };
-		36D909DF1921D2B1000D6825 /* libopencore-amrwb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrwb.a"; sourceTree = "<group>"; };
-		36D909E21921D2C2000D6825 /* Mp3RecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mp3RecordWriter.h; sourceTree = "<group>"; };
-		36D909E31921D2C2000D6825 /* Mp3RecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mp3RecordWriter.m; sourceTree = "<group>"; };
-		36D90A2D1921DBC9000D6825 /* lame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lame.h; sourceTree = "<group>"; };
-		36D90A2E1921DBC9000D6825 /* libmp3lame.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmp3lame.a; sourceTree = "<group>"; };
 		36DE7E731921060C00E3067D /* MLRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36DE7E761921060C00E3067D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		36DE7E781921060C00E3067D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -85,12 +91,6 @@
 		36DE7E9D1921060D00E3067D /* MLRecorderTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MLRecorderTests-Info.plist"; sourceTree = "<group>"; };
 		36DE7E9F1921060D00E3067D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		36DE7EA11921060D00E3067D /* MLRecorderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLRecorderTests.m; sourceTree = "<group>"; };
-		36DE7EB9192106C300E3067D /* AmrRecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmrRecordWriter.h; sourceTree = "<group>"; };
-		36DE7EBA192106C300E3067D /* AmrRecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmrRecordWriter.m; sourceTree = "<group>"; };
-		36DE7EBB192106C300E3067D /* CafRecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CafRecordWriter.h; sourceTree = "<group>"; };
-		36DE7EBC192106C300E3067D /* CafRecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CafRecordWriter.m; sourceTree = "<group>"; };
-		36DE7EBD192106C300E3067D /* MLAudioRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioRecorder.h; sourceTree = "<group>"; };
-		36DE7EBE192106C300E3067D /* MLAudioRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioRecorder.m; sourceTree = "<group>"; };
 		36DE7EC2192106CD00E3067D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		36DE7EC4192106D100E3067D /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -101,12 +101,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				36DE7EC5192106D100E3067D /* AVFoundation.framework in Frameworks */,
-				36D90A2F1921DBC9000D6825 /* libmp3lame.a in Frameworks */,
-				36D909E01921D2B1000D6825 /* libopencore-amrnb.a in Frameworks */,
+				369D58B519AECA95004AB79C /* libmp3lame.a in Frameworks */,
+				369D58AF19AECA95004AB79C /* libopencore-amrnb.a in Frameworks */,
 				36DE7EC3192106CD00E3067D /* AudioToolbox.framework in Frameworks */,
 				36DE7E791921060C00E3067D /* CoreGraphics.framework in Frameworks */,
 				36DE7E7B1921060C00E3067D /* UIKit.framework in Frameworks */,
-				36D909E11921D2B1000D6825 /* libopencore-amrwb.a in Frameworks */,
+				369D58B019AECA95004AB79C /* libopencore-amrwb.a in Frameworks */,
 				36DE7E771921060C00E3067D /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -124,67 +124,86 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		36258DEE192DFA420051388E /* MLAudioPlayer */ = {
+		369D588F19AECA64004AB79C /* MLAudioPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				36258DEF192DFA5E0051388E /* MLAudioPlayer.h */,
-				36258DF0192DFA5E0051388E /* MLAudioPlayer.m */,
-				36258DF2192F0A0F0051388E /* AmrPlayerReader.h */,
-				36258DF3192F0A0F0051388E /* AmrPlayerReader.m */,
+				369D589019AECA64004AB79C /* AmrPlayerReader.h */,
+				369D589119AECA64004AB79C /* AmrPlayerReader.m */,
+				369D589219AECA64004AB79C /* MLAudioPlayer.h */,
+				369D589319AECA64004AB79C /* MLAudioPlayer.m */,
 			);
 			path = MLAudioPlayer;
 			sourceTree = "<group>";
 		};
-		36D909D51921D2B1000D6825 /* amr_en_de */ = {
+		369D589619AECA95004AB79C /* MLAudioRecorder */ = {
 			isa = PBXGroup;
 			children = (
-				36D909D61921D2B1000D6825 /* include */,
-				36D909DD1921D2B1000D6825 /* lib */,
+				369D589719AECA95004AB79C /* amr_en_de */,
+				369D58A219AECA95004AB79C /* AmrRecordWriter.h */,
+				369D58A319AECA95004AB79C /* AmrRecordWriter.m */,
+				369D58A419AECA95004AB79C /* CafRecordWriter.h */,
+				369D58A519AECA95004AB79C /* CafRecordWriter.m */,
+				369D58A619AECA95004AB79C /* MLAudioMeterObserver.h */,
+				369D58A719AECA95004AB79C /* MLAudioMeterObserver.m */,
+				369D58A819AECA95004AB79C /* MLAudioRecorder.h */,
+				369D58A919AECA95004AB79C /* MLAudioRecorder.m */,
+				369D58AA19AECA95004AB79C /* mp3_en_de */,
+				369D58AD19AECA95004AB79C /* Mp3RecordWriter.h */,
+				369D58AE19AECA95004AB79C /* Mp3RecordWriter.m */,
+			);
+			path = MLAudioRecorder;
+			sourceTree = "<group>";
+		};
+		369D589719AECA95004AB79C /* amr_en_de */ = {
+			isa = PBXGroup;
+			children = (
+				369D589819AECA95004AB79C /* include */,
+				369D589F19AECA95004AB79C /* lib */,
 			);
 			path = amr_en_de;
 			sourceTree = "<group>";
 		};
-		36D909D61921D2B1000D6825 /* include */ = {
+		369D589819AECA95004AB79C /* include */ = {
 			isa = PBXGroup;
 			children = (
-				36D909D71921D2B1000D6825 /* opencore-amrnb */,
-				36D909DA1921D2B1000D6825 /* opencore-amrwb */,
+				369D589919AECA95004AB79C /* opencore-amrnb */,
+				369D589C19AECA95004AB79C /* opencore-amrwb */,
 			);
 			path = include;
 			sourceTree = "<group>";
 		};
-		36D909D71921D2B1000D6825 /* opencore-amrnb */ = {
+		369D589919AECA95004AB79C /* opencore-amrnb */ = {
 			isa = PBXGroup;
 			children = (
-				36D909D81921D2B1000D6825 /* interf_dec.h */,
-				36D909D91921D2B1000D6825 /* interf_enc.h */,
+				369D589A19AECA95004AB79C /* interf_dec.h */,
+				369D589B19AECA95004AB79C /* interf_enc.h */,
 			);
 			path = "opencore-amrnb";
 			sourceTree = "<group>";
 		};
-		36D909DA1921D2B1000D6825 /* opencore-amrwb */ = {
+		369D589C19AECA95004AB79C /* opencore-amrwb */ = {
 			isa = PBXGroup;
 			children = (
-				36D909DB1921D2B1000D6825 /* dec_if.h */,
-				36D909DC1921D2B1000D6825 /* if_rom.h */,
+				369D589D19AECA95004AB79C /* dec_if.h */,
+				369D589E19AECA95004AB79C /* if_rom.h */,
 			);
 			path = "opencore-amrwb";
 			sourceTree = "<group>";
 		};
-		36D909DD1921D2B1000D6825 /* lib */ = {
+		369D589F19AECA95004AB79C /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				36D909DE1921D2B1000D6825 /* libopencore-amrnb.a */,
-				36D909DF1921D2B1000D6825 /* libopencore-amrwb.a */,
+				369D58A019AECA95004AB79C /* libopencore-amrnb.a */,
+				369D58A119AECA95004AB79C /* libopencore-amrwb.a */,
 			);
 			path = lib;
 			sourceTree = "<group>";
 		};
-		36D90A2C1921DBC9000D6825 /* mp3_en_de */ = {
+		369D58AA19AECA95004AB79C /* mp3_en_de */ = {
 			isa = PBXGroup;
 			children = (
-				36D90A2D1921DBC9000D6825 /* lame.h */,
-				36D90A2E1921DBC9000D6825 /* libmp3lame.a */,
+				369D58AB19AECA95004AB79C /* lame.h */,
+				369D58AC19AECA95004AB79C /* libmp3lame.a */,
 			);
 			path = mp3_en_de;
 			sourceTree = "<group>";
@@ -224,8 +243,8 @@
 		36DE7E7C1921060C00E3067D /* MLRecorder */ = {
 			isa = PBXGroup;
 			children = (
-				36258DEE192DFA420051388E /* MLAudioPlayer */,
-				36DE7EB8192106B400E3067D /* MLAudioRecorder */,
+				369D589619AECA95004AB79C /* MLAudioRecorder */,
+				369D588F19AECA64004AB79C /* MLAudioPlayer */,
 				36C3B7E1192C798F00B6063D /* test.amr */,
 				368DCC28192FC3EF001F3574 /* test2.amr */,
 				36DE7E851921060D00E3067D /* AppDelegate.h */,
@@ -266,25 +285,6 @@
 				36DE7E9E1921060D00E3067D /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		36DE7EB8192106B400E3067D /* MLAudioRecorder */ = {
-			isa = PBXGroup;
-			children = (
-				36D90A2C1921DBC9000D6825 /* mp3_en_de */,
-				36D909D51921D2B1000D6825 /* amr_en_de */,
-				36DE7EB9192106C300E3067D /* AmrRecordWriter.h */,
-				36DE7EBA192106C300E3067D /* AmrRecordWriter.m */,
-				36DE7EBB192106C300E3067D /* CafRecordWriter.h */,
-				36DE7EBC192106C300E3067D /* CafRecordWriter.m */,
-				36D909E21921D2C2000D6825 /* Mp3RecordWriter.h */,
-				36D909E31921D2C2000D6825 /* Mp3RecordWriter.m */,
-				36DE7EBD192106C300E3067D /* MLAudioRecorder.h */,
-				36DE7EBE192106C300E3067D /* MLAudioRecorder.m */,
-				369BEF681922094A00CAF381 /* MLAudioMeterObserver.h */,
-				369BEF691922094A00CAF381 /* MLAudioMeterObserver.m */,
-			);
-			path = MLAudioRecorder;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -386,15 +386,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				36DE7EBF192106C300E3067D /* AmrRecordWriter.m in Sources */,
-				369BEF6A1922094A00CAF381 /* MLAudioMeterObserver.m in Sources */,
-				36DE7EC0192106C300E3067D /* CafRecordWriter.m in Sources */,
-				36258DF1192DFA5E0051388E /* MLAudioPlayer.m in Sources */,
+				369D58B119AECA95004AB79C /* AmrRecordWriter.m in Sources */,
+				369D58B319AECA95004AB79C /* MLAudioMeterObserver.m in Sources */,
+				369D589419AECA64004AB79C /* AmrPlayerReader.m in Sources */,
+				369D589519AECA64004AB79C /* MLAudioPlayer.m in Sources */,
+				369D58B619AECA95004AB79C /* Mp3RecordWriter.m in Sources */,
 				36DE7E8D1921060D00E3067D /* ViewController.m in Sources */,
-				36DE7EC1192106C300E3067D /* MLAudioRecorder.m in Sources */,
 				36DE7E871921060D00E3067D /* AppDelegate.m in Sources */,
-				36D909E41921D2C2000D6825 /* Mp3RecordWriter.m in Sources */,
-				36258DF4192F0A0F0051388E /* AmrPlayerReader.m in Sources */,
+				369D58B419AECA95004AB79C /* MLAudioRecorder.m in Sources */,
+				369D58B219AECA95004AB79C /* CafRecordWriter.m in Sources */,
 				36DE7E831921060D00E3067D /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

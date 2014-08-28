@@ -36,8 +36,9 @@ return; \
     if (self) {
         //这里默认用_设置下吧。免得直接初始化了timer
         _refreshInterval = kDefaultRefreshInterval;
+        self.channelCount = 1;
         //象征性的初始化一下
-        _levelMeterStates = (AudioQueueLevelMeterState*)malloc(sizeof(AudioQueueLevelMeterState) * 0);
+        _levelMeterStates = (AudioQueueLevelMeterState*)malloc(sizeof(AudioQueueLevelMeterState) * self.channelCount);
     }
     return self;
 }
@@ -46,6 +47,8 @@ return; \
 {
     [self.timer invalidate];
     self.timer = nil;
+    
+    free(_levelMeterStates);
     
 	NSLog(@"MLAudioMeterObserver dealloc");
 }

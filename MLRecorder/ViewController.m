@@ -70,7 +70,7 @@
     
     MLAudioMeterObserver *meterObserver = [[MLAudioMeterObserver alloc]init];
     meterObserver.actionBlock = ^(NSArray *levelMeterStates,MLAudioMeterObserver *meterObserver){
-        //        NSLog(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
+                NSLog(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
     };
     meterObserver.errorBlock = ^(NSError *error,MLAudioMeterObserver *meterObserver){
         [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
@@ -127,12 +127,12 @@
     
     
     //button event test
-    //    [self.recordButton addTarget:self action:@selector(dragInside) forControlEvents:UIControlEventTouchDragInside];
-    //    [self.recordButton addTarget:self action:@selector(dragOutside) forControlEvents:UIControlEventTouchDragOutside];
-    //    [self.recordButton addTarget:self action:@selector(dragEnter) forControlEvents:UIControlEventTouchDragEnter];
-    //    [self.recordButton addTarget:self action:@selector(dragExit) forControlEvents:UIControlEventTouchDragExit];
-    //    [self.recordButton addTarget:self action:@selector(upOutSide) forControlEvents:UIControlEventTouchUpOutside];
-    //    [self.recordButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchCancel];
+        [self.recordButton addTarget:self action:@selector(dragEnter) forControlEvents:UIControlEventTouchDragEnter];
+        [self.recordButton addTarget:self action:@selector(dragExit) forControlEvents:UIControlEventTouchDragExit];
+        [self.recordButton addTarget:self action:@selector(upOutSide) forControlEvents:UIControlEventTouchUpOutside];
+        [self.recordButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchCancel];
+     [self.recordButton addTarget:self action:@selector(down) forControlEvents:UIControlEventTouchDown];
+    [self.recordButton addTarget:self action:@selector(upInside) forControlEvents:UIControlEventTouchUpInside];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioSessionDidChangeInterruptionType:)
                                                  name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
@@ -161,6 +161,7 @@
 }
 
 - (IBAction)record:(id)sender {
+    
     UIButton *recordButton = (UIButton*)sender;
     
     if (self.recorder.isRecording) {
@@ -194,30 +195,31 @@
     
 }
 
-
-- (void)dragOutside
-{
-    NSLog(@"dragOutside");
-}
-- (void)dragInside
-{
-    NSLog(@"dragInside");
-}
 - (void)dragEnter
 {
-    NSLog(@"dragEnter");
+    NSLog(@"T普通提示录音状态");
 }
 - (void)dragExit
 {
-    NSLog(@"dragExit");
+    NSLog(@"T提示松开可取消");
 }
 - (void)upOutSide
 {
-    NSLog(@"upOutSide");
+    NSLog(@"T取消录音");
 }
 - (void)cancel
 {
-    NSLog(@"cancel");
+    NSLog(@"T取消录音");
 }
 
+- (void)down
+{
+    NSLog(@"T开始录音");
+    [self dragEnter];
+}
+
+- (void)upInside
+{
+    NSLog(@"T结束录音");
+}
 @end
