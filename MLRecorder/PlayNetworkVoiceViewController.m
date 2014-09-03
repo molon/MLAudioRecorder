@@ -8,6 +8,7 @@
 
 #import "PlayNetworkVoiceViewController.h"
 #import "MLPlayVoiceButton.h"
+#import "MLAmrPlayer.h"
 
 @interface PlayNetworkVoiceViewController ()
 
@@ -25,6 +26,11 @@
         // Custom initialization
     }
     return self;
+}
+
+- (void)dealloc
+{
+	[[MLAmrPlayer shareInstance]stopPlaying];
 }
 
 - (void)viewDidLoad
