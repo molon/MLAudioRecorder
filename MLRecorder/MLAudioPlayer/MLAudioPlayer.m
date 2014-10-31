@@ -193,7 +193,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
         IfAudioQueueErrorPostAndReturn(AudioQueueAllocateBufferWithPacketDescriptions(_audioQueue, bufferByteSize,0, &_audioBuffers[i]),@"为音频输出队列建立缓冲区失败");
     }
     
-    // 开始录音
+    // 开始播放
     IfAudioQueueErrorPostAndReturn(AudioQueueSetParameter(_audioQueue, kAudioQueueParam_Volume, 1.0),@"为音频输出设置音量失败");
     
     self.isPlaying = YES;
@@ -257,22 +257,32 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 }
 
 #pragma mark - proximity monitor
-
-- (BOOL)isNotUseBuiltInPort
+//是否使用除了内建的声音以外的播放系统
+- (BOOL)isUseOutputExceptBuiltInPort
 {
     NSArray *outputs = [[AVAudioSession sharedInstance]currentRoute].outputs;
     if (outputs.count<=0) {
         return NO;
     }
-    AVAudioSessionPortDescription *port = (AVAudioSessionPortDescription*)outputs[0];
     
-    return ![port.portType isEqualToString:AVAudioSessionPortBuiltInReceiver]&&![port.portType isEqualToString:AVAudioSessionPortBuiltInSpeaker];
+    for (AVAudioSessionPortDescription *port in outputs) {
+        //如果不是两个内建里的一个
+        if ([port.portType isEqualToString:AVAudioSessionPortBuiltInReceiver]||[port.portType isEqualToString:AVAudioSessionPortBuiltInSpeaker]) {
+            continue;
+        }
+        return YES;
+    }
+    
+    return NO;
 }
 
 - (void)startProximityMonitering {
     [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
-//    [self sensorStateChange:nil];
-    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+    if ([self isUseOutputExceptBuiltInPort]) {
+        [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
+    }else{
+        [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+    }
     DLOG(@"开启距离监听");
 }
 
@@ -283,9 +293,9 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 }
 
 - (void)sensorStateChange:(NSNotification *)notification {
-    if ([self isNotUseBuiltInPort]) {
-        //        DLOG(@"有耳机");
-        return;//带上耳机不需要这个
+    if ([self isUseOutputExceptBuiltInPort]) {
+        //                DLOG(@"有耳机");
+        return;//带上耳机直接返回
     }
     //如果此时手机靠近面部放在耳朵旁，那么声音将通过听筒输出，并将屏幕变暗
     if ([UIDevice currentDevice].isProximityMonitoringEnabled) {
@@ -301,14 +311,14 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 
 - (void)sessionRouteChange:(NSNotification *)notification {
     
-    if ([notification.userInfo[AVAudioSessionRouteChangeReasonKey] unsignedIntegerValue] == AVAudioSessionRouteChangeReasonNewDeviceAvailable) {
+    if ([notification.userInfo[AVAudioSessionRouteChangeReasonKey] integerValue] == AVAudioSessionRouteChangeReasonNewDeviceAvailable) {
         //        DLOG(@"新设备插入");
-        if ([self isNotUseBuiltInPort]) {
+        if ([self isUseOutputExceptBuiltInPort]) {
             [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
         }
     }else if ([notification.userInfo[AVAudioSessionRouteChangeReasonKey] integerValue] == AVAudioSessionRouteChangeReasonOldDeviceUnavailable) {
         //        DLOG(@"新设备拔出");
-        if (![self isNotUseBuiltInPort]) {
+        if (![self isUseOutputExceptBuiltInPort]) {
             [self sensorStateChange:nil];
         }
     }
