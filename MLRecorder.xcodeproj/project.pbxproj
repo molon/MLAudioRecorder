@@ -47,8 +47,8 @@
 		369D58B219AECA95004AB79C /* CafRecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A519AECA95004AB79C /* CafRecordWriter.m */; };
 		369D58B319AECA95004AB79C /* MLAudioMeterObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A719AECA95004AB79C /* MLAudioMeterObserver.m */; };
 		369D58B419AECA95004AB79C /* MLAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A919AECA95004AB79C /* MLAudioRecorder.m */; };
-		369D58B519AECA95004AB79C /* libmp3lame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 369D58AC19AECA95004AB79C /* libmp3lame.a */; };
 		369D58B619AECA95004AB79C /* Mp3RecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58AE19AECA95004AB79C /* Mp3RecordWriter.m */; };
+		36D12DE91A08A85100240541 /* lame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36D12DE81A08A85100240541 /* lame.framework */; };
 		36DE7E771921060C00E3067D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E761921060C00E3067D /* Foundation.framework */; };
 		36DE7E791921060C00E3067D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E781921060C00E3067D /* CoreGraphics.framework */; };
 		36DE7E7B1921060C00E3067D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E7A1921060C00E3067D /* UIKit.framework */; };
@@ -152,11 +152,10 @@
 		369D58A719AECA95004AB79C /* MLAudioMeterObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioMeterObserver.m; sourceTree = "<group>"; };
 		369D58A819AECA95004AB79C /* MLAudioRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAudioRecorder.h; sourceTree = "<group>"; };
 		369D58A919AECA95004AB79C /* MLAudioRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioRecorder.m; sourceTree = "<group>"; };
-		369D58AB19AECA95004AB79C /* lame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lame.h; sourceTree = "<group>"; };
-		369D58AC19AECA95004AB79C /* libmp3lame.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmp3lame.a; sourceTree = "<group>"; };
 		369D58AD19AECA95004AB79C /* Mp3RecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mp3RecordWriter.h; sourceTree = "<group>"; };
 		369D58AE19AECA95004AB79C /* Mp3RecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mp3RecordWriter.m; sourceTree = "<group>"; };
 		36C3B7E1192C798F00B6063D /* test.amr */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.amr; sourceTree = "<group>"; };
+		36D12DE81A08A85100240541 /* lame.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = lame.framework; sourceTree = "<group>"; };
 		36DE7E731921060C00E3067D /* MLRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36DE7E761921060C00E3067D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		36DE7E781921060C00E3067D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -186,7 +185,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				36DE7EC5192106D100E3067D /* AVFoundation.framework in Frameworks */,
-				369D58B519AECA95004AB79C /* libmp3lame.a in Frameworks */,
+				36D12DE91A08A85100240541 /* lame.framework in Frameworks */,
 				369D58AF19AECA95004AB79C /* libopencore-amrnb.a in Frameworks */,
 				36DE7EC3192106CD00E3067D /* AudioToolbox.framework in Frameworks */,
 				36DE7E791921060C00E3067D /* CoreGraphics.framework in Frameworks */,
@@ -378,7 +377,6 @@
 				369D58A719AECA95004AB79C /* MLAudioMeterObserver.m */,
 				369D58A819AECA95004AB79C /* MLAudioRecorder.h */,
 				369D58A919AECA95004AB79C /* MLAudioRecorder.m */,
-				369D58AA19AECA95004AB79C /* mp3_en_de */,
 				369D58AD19AECA95004AB79C /* Mp3RecordWriter.h */,
 				369D58AE19AECA95004AB79C /* Mp3RecordWriter.m */,
 			);
@@ -430,15 +428,6 @@
 			path = lib;
 			sourceTree = "<group>";
 		};
-		369D58AA19AECA95004AB79C /* mp3_en_de */ = {
-			isa = PBXGroup;
-			children = (
-				369D58AB19AECA95004AB79C /* lame.h */,
-				369D58AC19AECA95004AB79C /* libmp3lame.a */,
-			);
-			path = mp3_en_de;
-			sourceTree = "<group>";
-		};
 		36DE7E6A1921060C00E3067D = {
 			isa = PBXGroup;
 			children = (
@@ -461,6 +450,7 @@
 		36DE7E751921060C00E3067D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				36D12DE81A08A85100240541 /* lame.framework */,
 				36DE7EC4192106D100E3067D /* AVFoundation.framework */,
 				36DE7EC2192106CD00E3067D /* AudioToolbox.framework */,
 				36DE7E761921060C00E3067D /* Foundation.framework */,
@@ -784,9 +774,13 @@
 		36DE7EA61921060D00E3067D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLRecorder/MLRecorder-Prefix.pch";
 				INFOPLIST_FILE = "MLRecorder/MLRecorder-Info.plist";
@@ -794,7 +788,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MLRecorder/MLAudioRecorder/amr_en_de/lib",
-					"$(PROJECT_DIR)/MLRecorder/MLAudioRecorder/mp3_en_de",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -804,9 +797,13 @@
 		36DE7EA71921060D00E3067D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLRecorder/MLRecorder-Prefix.pch";
 				INFOPLIST_FILE = "MLRecorder/MLRecorder-Info.plist";
@@ -814,7 +811,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MLRecorder/MLAudioRecorder/amr_en_de/lib",
-					"$(PROJECT_DIR)/MLRecorder/MLAudioRecorder/mp3_en_de",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

@@ -7,7 +7,7 @@
 //
 
 #import "Mp3RecordWriter.h"
-#import "lame.h"
+#import <lame/lame.h>
 
 @interface Mp3RecordWriter()
 {
