@@ -100,6 +100,10 @@
                 __strong __typeof(weakSelf)strongSelf = weakSelf;
                 if (strongSelf.isInSlack) {
                     [strongSelf.simulateSlackDatas addObject:data];
+                    //只保留4个，根据kDefaultBufferDurationSeconds的话应该是1秒的时间，原因见simulateSlackButtonPressed
+                    if (strongSelf.simulateSlackDatas.count>4) {
+                        [strongSelf.simulateSlackDatas removeObjectAtIndex:0];
+                    }
                 }else{
                     [strongSelf.player appendPacket:data];
                 }
@@ -147,19 +151,10 @@
 - (void)simulateSlackButtonPressed
 {
     if (self.isInSlack) {
-        //一次性把卡顿记录数据全部投递
-#warning 这里需要注意，卡顿的时间里记录的数据投递后，卡顿的时间实时播放里会永远延迟，测试下即可发现。对于这种情况是没法避免的，我们只能只能忽略卡顿内的数据，或者只播放其中的最后一小段，这个使用时请根据自身情况判断。现在下面的是把所有卡顿的数据都投递。
-        
-        
-        //例如我们只保留4个缓冲包，根据kDefaultBufferDurationSeconds的话应该是1秒的时候
-        NSInteger beginIndex = self.simulateSlackDatas.count-4;
-        if (beginIndex<0) {
-            beginIndex=0;
+#warning 这里需要注意，卡顿的时间里记录的数据投递后，卡顿的时间实时播放里会永远延迟，测试下即可发现。对于这种情况是没法避免的，我们只能只能忽略卡顿内的数据，或者只播放其中的最后一小段，这个使用时请根据自身情况判断。
+        for (NSData *data in self.simulateSlackDatas) {
+            [self.player appendPacket:data];
         }
-        for (NSInteger i=beginIndex; i<self.simulateSlackDatas.count; i++) {
-            [self.player appendPacket:self.simulateSlackDatas[i]];
-        }
-        
         [self.simulateSlackDatas removeAllObjects];
         
         self.isInSlack = NO;
