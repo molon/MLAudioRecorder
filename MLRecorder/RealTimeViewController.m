@@ -8,13 +8,15 @@
 
 #import "RealTimeViewController.h"
 #import "MLAudioRecorder.h"
-#import "MLAudioBufferPlayer.h"
+#import "MLAudioRealTimePlayer.h"
 #import "CafRecordInBufferWriter.h"
+
+#warning 特别注意一个问题，测试此功能的时候请使用耳机，否则会造成电脑播放出来的声音又被录了进去，造成死循环不断重复。。老子因为这个屌问题研究了他妈的几个小时。最后还是我媳妇发现的！！
 
 @interface RealTimeViewController()
 
 @property (nonatomic, strong) MLAudioRecorder *recorder;
-@property (nonatomic, strong) MLAudioBufferPlayer *player;
+@property (nonatomic, strong) MLAudioRealTimePlayer *player;
 @property (nonatomic, strong) CafRecordInBufferWriter *recordWriter;
 
 @property (nonatomic, strong) UIButton *button;
@@ -47,7 +49,7 @@
     self.button.center = self.view.center;
     
     [self.view addSubview:self.simulateSlackButton];
-    self.simulateSlackButton.frame = CGRectMake(self.button.frame.origin.x, CGRectGetMaxY(self.button.frame)+20.0f, 100, 40);
+    self.simulateSlackButton.frame = CGRectMake(self.button.frame.origin.x-10.0f, CGRectGetMaxY(self.button.frame)+20.0f, 100, 40);
     
     [self.player start];
 }
@@ -99,7 +101,7 @@
                 if (strongSelf.isInSlack) {
                     [strongSelf.simulateSlackDatas addObject:data];
                 }else{
-                    [strongSelf.player enqueuePacket:data];
+                    [strongSelf.player appendPacket:data];
                 }
             });
         }];
@@ -116,14 +118,14 @@
     return _recorder;
 }
 
-- (MLAudioBufferPlayer *)player
+- (MLAudioRealTimePlayer *)player
 {
     if (!_player) {
-        _player = [MLAudioBufferPlayer new];
-        [_player setDidReceiveErrorBlock:^(MLAudioBufferPlayer *player, NSError *error) {
+        _player = [MLAudioRealTimePlayer new];
+        [_player setDidReceiveErrorBlock:^(MLAudioRealTimePlayer *player, NSError *error) {
             DLOG(@"实时播放错误:%@",error);
         }];
-        [_player setDidReceiveStoppedBlock:^(MLAudioBufferPlayer *player) {
+        [_player setDidReceiveStoppedBlock:^(MLAudioRealTimePlayer *player) {
             DLOG(@"实时播放停止");
         }];
     }
@@ -146,9 +148,18 @@
 {
     if (self.isInSlack) {
         //一次性把卡顿记录数据全部投递
-        for (NSData *data in self.simulateSlackDatas) {
-            [self.player enqueuePacket:data];
+#warning 这里需要注意，卡顿的时间里记录的数据投递后，卡顿的时间实时播放里会永远延迟，测试下即可发现。对于这种情况是没法避免的，我们只能只能忽略卡顿内的数据，或者只播放其中的最后一小段，这个使用时请根据自身情况判断。现在下面的是把所有卡顿的数据都投递。
+        
+        
+        //例如我们只保留4个缓冲包，根据kDefaultBufferDurationSeconds的话应该是1秒的时候
+        NSInteger beginIndex = self.simulateSlackDatas.count-4;
+        if (beginIndex<0) {
+            beginIndex=0;
         }
+        for (NSInteger i=beginIndex; i<self.simulateSlackDatas.count; i++) {
+            [self.player appendPacket:self.simulateSlackDatas[i]];
+        }
+        
         [self.simulateSlackDatas removeAllObjects];
         
         self.isInSlack = NO;

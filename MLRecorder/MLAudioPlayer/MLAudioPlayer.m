@@ -11,7 +11,7 @@
 
 #define kMLAudioPlayerErrorDomain @"MLAudioPlayerErrorDomain"
 
-#define kDefaultBufferDurationSeconds 0.5
+#define kDefaultBufferDurationSeconds 0.25
 
 #define kNumberAudioQueueBuffers 3
 

@@ -1,37 +1,29 @@
 //
-//  MLAudioBufferPlayer.m
+//  MLAudioRealTimePlayer.m
 //  MLRecorder
 //
 //  Created by molon on 14/12/19.
 //  Copyright (c) 2014年 molon. All rights reserved.
 //
 
-#import "MLAudioBufferPlayer.h"
+#import "MLAudioRealTimePlayer.h"
 #import <AVFoundation/AVFoundation.h>
 
-#define kMLAudioBufferPlayerErrorDomain @"MLAudioBufferPlayerErrorDomain"
+#define kMLAudioRealTimePlayerErrorDomain @"MLAudioRealTimePlayerErrorDomain"
 
 #define kNumberAudioQueueBuffers 3
 
-#define kDefaultBufferDurationSeconds 0.5
-
-#define IfAudioQueueErrorPostAndReturnValue(operation,error,value) \
-do{\
-if(operation!=noErr) { \
-[self postAErrorWithErrorCode:MLAudioBufferPlayerErrorCodeAboutQueue andDescription:error]; \
-return (value); \
-}   \
-}while(0)
+#define kDefaultBufferDurationSeconds 0.25
 
 #define IfAudioQueueErrorPostAndReturn(operation,error) \
 do{\
 if(operation!=noErr) { \
-[self postAErrorWithErrorCode:MLAudioBufferPlayerErrorCodeAboutQueue andDescription:error]; \
+[self postAErrorWithErrorCode:MLAudioRealTimePlayerErrorCodeAboutQueue andDescription:error]; \
 return; \
 }   \
 }while(0)
 
-@interface MLAudioBufferPlayer()
+@interface MLAudioRealTimePlayer()
 {
     //音频输出缓冲区
     AudioQueueBufferRef	_audioBuffers[kNumberAudioQueueBuffers];
@@ -48,7 +40,7 @@ return; \
 
 @end
 
-@implementation MLAudioBufferPlayer
+@implementation MLAudioRealTimePlayer
 
 static inline AudioStreamBasicDescription kDefaultAudioFormat() {
     static AudioStreamBasicDescription _defaultAudioFormat;
@@ -91,12 +83,12 @@ static inline AudioStreamBasicDescription kDefaultAudioFormat() {
     
     //简单检测下不支持可变速率
     if (_audioFormat.mFramesPerPacket<=0||_audioFormat.mBytesPerPacket<=0) {
-        [self postAErrorWithErrorCode:MLAudioBufferPlayerErrorCodeAboutOther andDescription:@"format 设置有误，此player不支持VBR"];
+        [self postAErrorWithErrorCode:MLAudioRealTimePlayerErrorCodeAboutOther andDescription:@"format 设置有误，此player不支持VBR"];
         return;
     }
     
     //设置音频输出队列
-    IfAudioQueueErrorPostAndReturn(AudioQueueNewOutput(&_audioFormat, outBufferHandlerForMLBufferPlayer, (__bridge void *)(self), CFRunLoopGetCurrent(), kCFRunLoopCommonModes, 0, &_audioQueue),@"音频输出队列初始化失败");
+    IfAudioQueueErrorPostAndReturn(AudioQueueNewOutput(&_audioFormat, outBufferHandlerForMLRealTimePlayer, (__bridge void *)(self), CFRunLoopGetCurrent(), kCFRunLoopCommonModes, 0, &_audioQueue),@"音频输出队列初始化失败");
     
     //计算估算的缓存区大小，这里我们忽略可变速率的情况
     static const int maxBufferSize = 0x10000;
@@ -118,7 +110,7 @@ static inline AudioStreamBasicDescription kDefaultAudioFormat() {
     }
     
     //设置正在运行的回调,这个一般在执行start和stop的时候会执行
-    IfAudioQueueErrorPostAndReturn(AudioQueueAddPropertyListener(_audioQueue, kAudioQueueProperty_IsRunning,isRunningProcForMLBufferPlayer, (__bridge void *)(self)), @"adding property listener");
+    IfAudioQueueErrorPostAndReturn(AudioQueueAddPropertyListener(_audioQueue, kAudioQueueProperty_IsRunning,isRunningProcForMLRealTimePlayer, (__bridge void *)(self)), @"adding property listener");
     
     //设置音量
     self.volume = 1.0f;
@@ -149,9 +141,9 @@ static inline AudioStreamBasicDescription kDefaultAudioFormat() {
 }
 
 #pragma mark - error
-- (void)postAErrorWithErrorCode:(MLAudioBufferPlayerErrorCode)code andDescription:(NSString*)description
+- (void)postAErrorWithErrorCode:(MLAudioRealTimePlayerErrorCode)code andDescription:(NSString*)description
 {
-    NSError *error = [NSError errorWithDomain:kMLAudioBufferPlayerErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
+    NSError *error = [NSError errorWithDomain:kMLAudioRealTimePlayerErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
     if (self.didReceiveErrorBlock) {
         self.didReceiveErrorBlock(self,error);
     }
@@ -173,9 +165,9 @@ static inline AudioStreamBasicDescription kDefaultAudioFormat() {
     IfAudioQueueErrorPostAndReturn(AudioQueueEnqueueBuffer(_audioQueue, audioBuffer, 0, NULL),@"准备音频输出缓存区失败");
 }
 
-void isRunningProcForMLBufferPlayer(void * inUserData,AudioQueueRef inAQ,AudioQueuePropertyID inID)
+void isRunningProcForMLRealTimePlayer(void * inUserData,AudioQueueRef inAQ,AudioQueuePropertyID inID)
 {
-    MLAudioBufferPlayer *player = (__bridge MLAudioBufferPlayer*)inUserData;
+    MLAudioRealTimePlayer *player = (__bridge MLAudioRealTimePlayer*)inUserData;
     
     UInt32 isRunning;
     UInt32 size = sizeof(isRunning);
@@ -191,9 +183,9 @@ void isRunningProcForMLBufferPlayer(void * inUserData,AudioQueueRef inAQ,AudioQu
     }
 }
 
-void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef inCompleteAQBuffer)
+void outBufferHandlerForMLRealTimePlayer(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef inCompleteAQBuffer)
 {
-    MLAudioBufferPlayer *player = (__bridge MLAudioBufferPlayer*)inUserData;
+    MLAudioRealTimePlayer *player = (__bridge MLAudioRealTimePlayer*)inUserData;
 
     BOOL *p_isWaitingOfAudioBuffer = (BOOL *)(inCompleteAQBuffer->mUserData);
     
@@ -207,11 +199,13 @@ void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,Audio
         //投递播放请求
         [player enqueueToPlayPacket:packet withAudioBuffer:inCompleteAQBuffer];
         
-        DLOG(@"buffer %p 投递了 packet %p",inCompleteAQBuffer,packet);
+//        NSLog(@"buffer %p 投递了 packet %p",inCompleteAQBuffer,packet);
         
         //塞了完毕，即将播放
         *p_isWaitingOfAudioBuffer = NO;
         
+    }else{
+//        NSLog(@"此Buffuer等待");
     }
 }
 
@@ -234,14 +228,17 @@ void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,Audio
     return YES;
 }
 
-- (void)enqueuePacket:(NSData *)audioPacket
+- (void)appendPacket:(NSData *)audioPacket
 {
     NSAssert([audioPacket length] <= self.bufferByteSize, @"Error: audioPacket太大了,不能追加");
     
     [self.audioPackets addObject:audioPacket];
     
     if ([self isWaiting]&&self.audioPackets.count>=kNumberAudioQueueBuffers) {
-        DLOG(@"等待后继续填充实时数据");
+        
+        AudioQueueReset(_audioQueue);
+        
+//        NSLog(@"等待后继续填充实时数据");
         //塞入三个Buffer
         for (NSInteger i=0; i<kNumberAudioQueueBuffers; i++) {
             [self enqueueToPlayPacket:self.audioPackets[i] withAudioBuffer:_audioBuffers[i]];
@@ -249,7 +246,11 @@ void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,Audio
         }
         NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, kNumberAudioQueueBuffers)];
         [self.audioPackets removeObjectsAtIndexes:indexSet];
+        
     }
+//    else{
+//        NSLog(@"添加一个数据包");
+//    }
 }
 
 - (void)cleanPackets
@@ -268,7 +269,7 @@ void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,Audio
     //设置audio session的category
     BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
     if (!ret) {
-        [self postAErrorWithErrorCode:MLAudioBufferPlayerErrorCodeAboutSession andDescription:@"为AVAudioSession设置Category失败"];
+        [self postAErrorWithErrorCode:MLAudioRealTimePlayerErrorCodeAboutSession andDescription:@"为AVAudioSession设置Category失败"];
         return;
     }
     
@@ -276,7 +277,7 @@ void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,Audio
     ret = [[AVAudioSession sharedInstance] setActive:YES error:&error];
     if (!ret)
     {
-        [self postAErrorWithErrorCode:MLAudioBufferPlayerErrorCodeAboutSession andDescription:@"Active AVAudioSession失败"];
+        [self postAErrorWithErrorCode:MLAudioRealTimePlayerErrorCodeAboutSession andDescription:@"Active AVAudioSession失败"];
         return;
     }
     

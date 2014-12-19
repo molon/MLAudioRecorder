@@ -38,10 +38,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [self.voiceButton1 setVoiceWithURL:[NSURL URLWithString:@"http://molon-amr.qiniudn.com/record1.amr?download"]];
+    [self.voiceButton1 setVoiceWithURL:[NSURL URLWithString:@"https://raw.githubusercontent.com/molon/MLAudioRecorder/master/record1.amr"]];
     
     self.voiceButton2.type = MLPlayVoiceButtonTypeRight;
-    [self.voiceButton2 setVoiceWithURL:[NSURL URLWithString:@"http://molon-amr.qiniudn.com/record2.amr?download"]];
+    [self.voiceButton2 setVoiceWithURL:[NSURL URLWithString:@"https://raw.githubusercontent.com/molon/MLAudioRecorder/master/record2.amr"]];
 }
 
 - (void)didReceiveMemoryWarning
