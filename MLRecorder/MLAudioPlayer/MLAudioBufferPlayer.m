@@ -136,6 +136,7 @@ static inline AudioStreamBasicDescription kDefaultAudioFormat() {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionInterruption:)
                                                  name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
+    
 }
 
 #pragma mark - getter
@@ -166,7 +167,7 @@ static inline AudioStreamBasicDescription kDefaultAudioFormat() {
     
     //把数据塞进去准备播放
     audioBuffer->mAudioDataByteSize = [audioPacket length];
-    [audioPacket getBytes:audioBuffer->mAudioData length:audioBuffer->mAudioDataByteSize];
+    memcpy(audioBuffer->mAudioData, audioPacket.bytes, audioPacket.length);
     audioBuffer->mPacketDescriptionCount = 0;
     
     IfAudioQueueErrorPostAndReturn(AudioQueueEnqueueBuffer(_audioQueue, audioBuffer, 0, NULL),@"准备音频输出缓存区失败");
@@ -200,13 +201,17 @@ void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,Audio
     *p_isWaitingOfAudioBuffer = YES;
     
     if (player.audioPackets.count>0) {
-        //投递播放请求
-        [player enqueueToPlayPacket:[player.audioPackets objectAtIndex:0] withAudioBuffer:inCompleteAQBuffer];
+        NSData *packet = [player.audioPackets objectAtIndex:0];
         //删除丫的
         [player.audioPackets removeObjectAtIndex:0];
+        //投递播放请求
+        [player enqueueToPlayPacket:packet withAudioBuffer:inCompleteAQBuffer];
+        
+        DLOG(@"buffer %p 投递了 packet %p",inCompleteAQBuffer,packet);
         
         //塞了完毕，即将播放
         *p_isWaitingOfAudioBuffer = NO;
+        
     }
 }
 
@@ -235,18 +240,15 @@ void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,Audio
     
     [self.audioPackets addObject:audioPacket];
     
-    //这里检测当前是否播放处于等待数据状态是的话就重准备数据
-    for (NSInteger i=0; i<kNumberAudioQueueBuffers; i++) {
-        if (_isWaitingOfAudioBuffers[i]) {
-            DLOG(@"等待后填充实时数据");
-            
-            //重准备一个等待中的缓冲区
-            [self enqueueToPlayPacket:audioPacket withAudioBuffer:_audioBuffers[i]];
-            //删除它
-            [self.audioPackets removeObject:audioPacket];
+    if ([self isWaiting]&&self.audioPackets.count>=kNumberAudioQueueBuffers) {
+        DLOG(@"等待后继续填充实时数据");
+        //塞入三个Buffer
+        for (NSInteger i=0; i<kNumberAudioQueueBuffers; i++) {
+            [self enqueueToPlayPacket:self.audioPackets[i] withAudioBuffer:_audioBuffers[i]];
             _isWaitingOfAudioBuffers[i] = NO;
-            break;
         }
+        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, kNumberAudioQueueBuffers)];
+        [self.audioPackets removeObjectsAtIndexes:indexSet];
     }
 }
 
@@ -286,7 +288,7 @@ void outBufferHandlerForMLBufferPlayer(void *inUserData,AudioQueueRef inAQ,Audio
     }
     
     IfAudioQueueErrorPostAndReturn(AudioQueueStart(_audioQueue, NULL),@"音频输出启动失败");
-    DLOG(@"开始实时播放");
+    DLOG(@"开始实时播放,等待数据投递");
 }
 
 - (void)stop
