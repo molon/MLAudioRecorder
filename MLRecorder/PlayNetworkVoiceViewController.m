@@ -38,6 +38,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+#warning 注意这俩我是放到github上的，如果github访问不良，则需要使用VPN翻墙才能测试此功能。
     [self.voiceButton1 setVoiceWithURL:[NSURL URLWithString:@"https://raw.githubusercontent.com/molon/MLAudioRecorder/master/record1.amr"]];
     
     self.voiceButton2.type = MLPlayVoiceButtonTypeRight;
