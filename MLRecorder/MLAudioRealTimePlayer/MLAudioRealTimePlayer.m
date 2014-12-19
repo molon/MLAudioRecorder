@@ -58,6 +58,17 @@ static inline AudioStreamBasicDescription kDefaultAudioFormat() {
     return _defaultAudioFormat;
 }
 
+- (void)dealloc
+{
+    NSAssert(!self.isPlaying, @"MLAudioRealTimePlayer dealloc之前必须停止播放");
+    
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    
+    DLOG(@"%@ dealloc",NSStringFromClass([self class]));
+}
+
 - (instancetype)init
 {
     self = [super init];
