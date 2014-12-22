@@ -92,15 +92,15 @@
     
     
     //caf
-        recorder.fileWriterDelegate = writer;
-        self.filePath = writer.filePath;
+//        recorder.fileWriterDelegate = writer;
+//        self.filePath = writer.filePath;
     //mp3
     //    recorder.fileWriterDelegate = mp3Writer;
     //    self.filePath = mp3Writer.filePath;
     
     //amr
-//    recorder.bufferDurationSeconds = 0.5;
-//    recorder.fileWriterDelegate = self.amrWriter;
+    recorder.bufferDurationSeconds = 0.25;
+    recorder.fileWriterDelegate = self.amrWriter;
     
     self.recorder = recorder;
     
@@ -176,29 +176,29 @@
 }
 
 - (IBAction)play:(id)sender {
-    UIButton *playButton = (UIButton*)sender;
-    if (self.avAudioPlayer.isPlaying) {
-        [self.avAudioPlayer stop];
-         [playButton setTitle:@"Play" forState:UIControlStateNormal];
-    }else{
-        self.avAudioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
-        [self.avAudioPlayer play];
-        [playButton setTitle:@"Stop" forState:UIControlStateNormal];
-    }
-    
-    
-//    self.amrReader.filePath = self.amrWriter.filePath;
-//    
-//    DLOG(@"文件时长%f",[AmrPlayerReader durationOfAmrFilePath:self.amrReader.filePath]);
-//    
 //    UIButton *playButton = (UIButton*)sender;
-//    
-//    if (self.player.isPlaying) {
-//        [self.player stopPlaying];
+//    if (self.avAudioPlayer.isPlaying) {
+//        [self.avAudioPlayer stop];
+//         [playButton setTitle:@"Play" forState:UIControlStateNormal];
 //    }else{
+//        self.avAudioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:self.filePath] error:nil];
+//        [self.avAudioPlayer play];
 //        [playButton setTitle:@"Stop" forState:UIControlStateNormal];
-//        [self.player startPlaying];
 //    }
+    
+    
+    self.amrReader.filePath = self.amrWriter.filePath;
+    
+    DLOG(@"文件时长%f",[AmrPlayerReader durationOfAmrFilePath:self.amrReader.filePath]);
+    
+    UIButton *playButton = (UIButton*)sender;
+    
+    if (self.player.isPlaying) {
+        [self.player stopPlaying];
+    }else{
+        [playButton setTitle:@"Stop" forState:UIControlStateNormal];
+        [self.player startPlaying];
+    }
     
 }
 

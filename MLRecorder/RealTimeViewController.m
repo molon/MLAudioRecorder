@@ -10,6 +10,10 @@
 #import "MLAudioRecorder.h"
 #import "MLAudioRealTimePlayer.h"
 #import "CafRecordInBufferWriter.h"
+#import "AmrRecordInBufferWriter.h"
+
+//amr解码
+#import "interf_dec.h"
 
 #warning 特别注意一个问题，测试此功能的时候请使用耳机，否则会造成电脑播放出来的声音又被录了进去，造成死循环不断重复。。老子因为这个屌问题研究了他妈的几个小时。最后还是我媳妇发现的！！
 
@@ -17,7 +21,8 @@
 
 @property (nonatomic, strong) MLAudioRecorder *recorder;
 @property (nonatomic, strong) MLAudioRealTimePlayer *player;
-@property (nonatomic, strong) CafRecordInBufferWriter *recordWriter;
+@property (nonatomic, strong) CafRecordInBufferWriter *cafRecordWriter;
+@property (nonatomic, strong) AmrRecordInBufferWriter *amrRecordWriter;
 
 @property (nonatomic, strong) UIButton *button;
 
@@ -89,15 +94,93 @@
     return _simulateSlackButton;
 }
 
-- (CafRecordInBufferWriter *)recordWriter
+
+- (NSData*)decodeForAmrData:(NSData*)amrData
 {
-    if (!_recordWriter) {
-        _recordWriter = [CafRecordInBufferWriter new];
+    //其实_destate 只需要初始化一次就够了。这里为了方便先扔这，只是demo嘛。。
+    void *_destate = 0;
+    // amr 解压句柄
+    _destate = Decoder_Interface_init();
+    
+    if(_destate==0){
+        return nil;
+    }
+    
+    int amrFramelen = 14;
+    int needReadFrameCount = floor(amrData.length/amrFramelen);
+    
+    NSMutableData *data = [NSMutableData data];
+    
+    unsigned char amrFrame[amrFramelen];
+    short pcmFrame[160];
+    
+    for (NSUInteger i=0; i<needReadFrameCount; i++) {
+        memset(amrFrame, 0, sizeof(amrFrame));
+        memset(pcmFrame, 0, sizeof(pcmFrame));
+        
+        NSRange range = NSMakeRange(amrFramelen*i, amrFramelen);
+        
+        [amrData getBytes:amrFrame range:range];
+        
+        // 解码一个AMR音频帧成PCM数据 (8k-16b-单声道)
+        Decoder_Interface_Decode(_destate, amrFrame, pcmFrame, 0);
+        
+        [data appendBytes:pcmFrame length:sizeof(pcmFrame)];
+    }
+    
+    if (_destate){
+        Decoder_Interface_exit((void*)_destate);
+        _destate = 0;
+    }
+    
+    return data;
+}
+
+- (AmrRecordInBufferWriter *)amrRecordWriter
+{
+    if (!_amrRecordWriter) {
+        _amrRecordWriter = [AmrRecordInBufferWriter new];
         __weak __typeof(self)weakSelf = self;
-        [_recordWriter setDidReceiveVoiceData:^(NSData *data) {
-            dispatch_async(dispatch_get_main_queue(), ^{ //注意这个屌地不是主线程，需要投递到主线程去做
+        [_amrRecordWriter setDidReceiveVoiceData:^(NSData *data) {
+            __strong __typeof(weakSelf)strongSelf = weakSelf;
+            
+            //解码
+            NSData *decodedData = [strongSelf decodeForAmrData:data];
+            
+            void (^executeBlock)() = ^{
                 //投递到Player里
-                __strong __typeof(weakSelf)strongSelf = weakSelf;
+                if (strongSelf.isInSlack) {
+                    [strongSelf.simulateSlackDatas addObject:decodedData];
+                    //只保留4个，根据kDefaultBufferDurationSeconds的话应该是1秒的时间，原因见simulateSlackButtonPressed
+                    if (strongSelf.simulateSlackDatas.count>4) {
+                        [strongSelf.simulateSlackDatas removeObjectAtIndex:0];
+                    }
+                }else{
+                    [strongSelf.player appendPacket:decodedData];
+                }
+            };
+            
+            if (![[NSThread currentThread]isEqual:[NSThread mainThread]]) {
+                dispatch_async(dispatch_get_main_queue(), ^{ //注意这个屌地不是主线程，需要投递到主线程去做
+                    executeBlock();
+                });
+            }else{
+                executeBlock();
+            }
+        }];
+    }
+    return _amrRecordWriter;
+}
+
+- (CafRecordInBufferWriter *)cafRecordWriter
+{
+    if (!_cafRecordWriter) {
+        _cafRecordWriter = [CafRecordInBufferWriter new];
+        __weak __typeof(self)weakSelf = self;
+        [_cafRecordWriter setDidReceiveVoiceData:^(NSData *data) {
+            __strong __typeof(weakSelf)strongSelf = weakSelf;
+            void (^executeBlock)() = ^{
+                //投递到Player里
                 if (strongSelf.isInSlack) {
                     [strongSelf.simulateSlackDatas addObject:data];
                     //只保留4个，根据kDefaultBufferDurationSeconds的话应该是1秒的时间，原因见simulateSlackButtonPressed
@@ -107,17 +190,28 @@
                 }else{
                     [strongSelf.player appendPacket:data];
                 }
-            });
+            };
+            
+            if (![[NSThread currentThread]isEqual:[NSThread mainThread]]) {
+                dispatch_async(dispatch_get_main_queue(), ^{ //注意这个屌地不是主线程，需要投递到主线程去做
+                    executeBlock();
+                });
+            }else{
+                executeBlock();
+            }
         }];
     }
-    return _recordWriter;
+    return _cafRecordWriter;
 }
+
 
 - (MLAudioRecorder *)recorder
 {
     if (!_recorder) {
         _recorder = [MLAudioRecorder new];
-        _recorder.fileWriterDelegate = self.recordWriter;
+        //这里可以改变是那种编码方式
+//        _recorder.fileWriterDelegate = self.amrRecordWriter;
+        _recorder.fileWriterDelegate = self.cafRecordWriter;
     }
     return _recorder;
 }

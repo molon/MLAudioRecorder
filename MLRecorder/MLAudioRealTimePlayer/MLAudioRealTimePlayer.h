@@ -26,8 +26,10 @@ typedef NS_OPTIONS(NSUInteger, MLAudioRealTimePlayerErrorCode) {
     //音频输入数据format
     AudioStreamBasicDescription	_audioFormat;
 }
+//自定义format时候使用
+- (instancetype)initWithAudioFormat:(AudioStreamBasicDescription)audioFormat;
 
-@property (nonatomic, strong,readonly) NSMutableArray *audioPackets;
+@property (nonatomic, assign,readonly) NSUInteger bufferByteSize;
 
 //可以设置音量默认是1.0
 @property (nonatomic, assign) AudioQueueParameterValue volume;

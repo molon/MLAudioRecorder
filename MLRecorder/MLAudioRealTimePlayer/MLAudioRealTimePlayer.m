@@ -112,6 +112,7 @@ static inline AudioStreamBasicDescription kDefaultAudioFormat() {
     bufferByteSize = bufferByteSize>maxBufferSize?maxBufferSize:bufferByteSize;
     bufferByteSize = bufferByteSize<minBufferSize?minBufferSize:bufferByteSize;
     self.bufferByteSize = bufferByteSize;
+    DLOG(@"实时播放缓冲区大小:%d",self.bufferByteSize);
     
     //设置缓冲器
     for (int i = 0; i < kNumberAudioQueueBuffers; ++i){

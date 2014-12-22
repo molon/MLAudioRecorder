@@ -48,6 +48,7 @@
 		369D58B319AECA95004AB79C /* MLAudioMeterObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A719AECA95004AB79C /* MLAudioMeterObserver.m */; };
 		369D58B419AECA95004AB79C /* MLAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58A919AECA95004AB79C /* MLAudioRecorder.m */; };
 		369D58B619AECA95004AB79C /* Mp3RecordWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 369D58AE19AECA95004AB79C /* Mp3RecordWriter.m */; };
+		36B359EA1A47CB10004C70C6 /* AmrRecordInBufferWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B359E91A47CB10004C70C6 /* AmrRecordInBufferWriter.m */; };
 		36D12DE91A08A85100240541 /* lame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36D12DE81A08A85100240541 /* lame.framework */; };
 		36DE7E771921060C00E3067D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E761921060C00E3067D /* Foundation.framework */; };
 		36DE7E791921060C00E3067D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DE7E781921060C00E3067D /* CoreGraphics.framework */; };
@@ -157,6 +158,8 @@
 		369D58A919AECA95004AB79C /* MLAudioRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAudioRecorder.m; sourceTree = "<group>"; };
 		369D58AD19AECA95004AB79C /* Mp3RecordWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mp3RecordWriter.h; sourceTree = "<group>"; };
 		369D58AE19AECA95004AB79C /* Mp3RecordWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mp3RecordWriter.m; sourceTree = "<group>"; };
+		36B359E81A47CB10004C70C6 /* AmrRecordInBufferWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmrRecordInBufferWriter.h; sourceTree = "<group>"; };
+		36B359E91A47CB10004C70C6 /* AmrRecordInBufferWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmrRecordInBufferWriter.m; sourceTree = "<group>"; };
 		36C3B7E1192C798F00B6063D /* test.amr */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.amr; sourceTree = "<group>"; };
 		36D12DE81A08A85100240541 /* lame.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = lame.framework; sourceTree = "<group>"; };
 		36DE7E731921060C00E3067D /* MLRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -535,6 +538,8 @@
 			children = (
 				36E62AE61A44568400A6FE9D /* CafRecordInBufferWriter.h */,
 				36E62AE71A44568400A6FE9D /* CafRecordInBufferWriter.m */,
+				36B359E81A47CB10004C70C6 /* AmrRecordInBufferWriter.h */,
+				36B359E91A47CB10004C70C6 /* AmrRecordInBufferWriter.m */,
 			);
 			name = TestRealTime;
 			sourceTree = "<group>";
@@ -680,6 +685,7 @@
 				365F953019AECE7F001BB9A0 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				36E62AE81A44568400A6FE9D /* CafRecordInBufferWriter.m in Sources */,
 				36E62AEE1A44A4D400A6FE9D /* MLAudioRealTimePlayer.m in Sources */,
+				36B359EA1A47CB10004C70C6 /* AmrRecordInBufferWriter.m in Sources */,
 				365F952B19AECE7F001BB9A0 /* AFNetworkReachabilityManager.m in Sources */,
 				365F953919AECE7F001BB9A0 /* MLDataResponseSerializer.m in Sources */,
 				365F952E19AECE7F001BB9A0 /* AFURLResponseSerialization.m in Sources */,
