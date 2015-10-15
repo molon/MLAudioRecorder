@@ -18,7 +18,7 @@
 /**
  *  每次的音频输入队列缓存区所保存的是多少秒的数据
  */
-#define kDefaultBufferDurationSeconds 0.25
+#define kDefaultBufferDurationSeconds 0.5
 /**
  *  采样率，要转码为amr的话必须为8000
  */

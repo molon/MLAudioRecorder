@@ -11,7 +11,7 @@
 
 #define kMLAudioPlayerErrorDomain @"MLAudioPlayerErrorDomain"
 
-#define kDefaultBufferDurationSeconds 0.25
+#define kDefaultBufferDurationSeconds 0.5
 
 #define kNumberAudioQueueBuffers 3
 
@@ -287,6 +287,7 @@ void outBufferHandler(void *inUserData,AudioQueueRef inAQ,AudioQueueBufferRef in
 }
 
 - (void)stopProximityMonitering {
+#warning 发现上段音频以暗屏播放停止后，再开始播放新音频后，光屏转暗屏后这一事件捕获不到。会出现判断有误的情况，微信也如此，但是微信对这种情况做了重力感应判断，即竖着时候，猜测如此
     [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
     [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
     DLOG(@"关闭距离监听");
