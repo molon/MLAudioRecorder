@@ -127,12 +127,12 @@
     
     
     //button event test
-        [self.recordButton addTarget:self action:@selector(dragEnter) forControlEvents:UIControlEventTouchDragEnter];
-        [self.recordButton addTarget:self action:@selector(dragExit) forControlEvents:UIControlEventTouchDragExit];
-        [self.recordButton addTarget:self action:@selector(upOutSide) forControlEvents:UIControlEventTouchUpOutside];
-        [self.recordButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchCancel];
-     [self.recordButton addTarget:self action:@selector(down) forControlEvents:UIControlEventTouchDown];
-    [self.recordButton addTarget:self action:@selector(upInside) forControlEvents:UIControlEventTouchUpInside];
+//        [self.recordButton addTarget:self action:@selector(dragEnter) forControlEvents:UIControlEventTouchDragEnter];
+//        [self.recordButton addTarget:self action:@selector(dragExit) forControlEvents:UIControlEventTouchDragExit];
+//        [self.recordButton addTarget:self action:@selector(upOutSide) forControlEvents:UIControlEventTouchUpOutside];
+//        [self.recordButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchCancel];
+//     [self.recordButton addTarget:self action:@selector(down) forControlEvents:UIControlEventTouchDown];
+//    [self.recordButton addTarget:self action:@selector(upInside) forControlEvents:UIControlEventTouchUpInside];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioSessionDidChangeInterruptionType:)
                                                  name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
